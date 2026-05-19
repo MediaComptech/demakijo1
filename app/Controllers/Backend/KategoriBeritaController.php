@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 namespace App\Controllers\Backend;
 use App\Core\Controller;
 use App\Core\Request;
