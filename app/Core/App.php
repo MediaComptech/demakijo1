@@ -30,6 +30,9 @@ class App
 
         // 4. Setup View Template Engine
         View::init();
+
+        // 5. Register aliases for Facades used in views
+        class_alias(\App\Core\Auth::class, 'Auth');
     }
 
     /**

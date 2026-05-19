@@ -20,7 +20,4 @@
     <div class='col-12 text-center py-5'><p class='text-muted fs-5'>Belum ada berita yang dipublikasikan.</p></div>
     @endforelse
 </div>
-<div class='d-flex justify-content-center mt-5'>
-    {{ $berita->links('pagination::bootstrap-5') }}
-</div>
 @endsection
