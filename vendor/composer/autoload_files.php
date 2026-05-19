@@ -18,4 +18,5 @@ return array(
     '320cde22f66dd4f5d3fd621d3e88b98f' => $vendorDir . '/symfony/polyfill-ctype/bootstrap.php',
     'a4a119a56e50fbb293281d9a48007e0e' => $vendorDir . '/symfony/polyfill-php80/bootstrap.php',
     'b51adb6d25ac31ff9b80d76506ef266d' => $baseDir . '/app/Helpers/GlobalHelper.php',
+    '365284bce8636722d3789a040086c576' => $baseDir . '/app/Core/LaravelFacades.php',
 );

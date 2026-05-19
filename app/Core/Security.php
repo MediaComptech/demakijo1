@@ -21,6 +21,14 @@ class Security
     }
 
     /**
+     * Alias untuk getCsrfToken() - digunakan oleh helper csrf_field()
+     */
+    public static function generateCsrfToken()
+    {
+        return self::getCsrfToken();
+    }
+
+    /**
      * Memverifikasi CSRF Token dari input POST
      */
     public static function verifyCsrfToken()

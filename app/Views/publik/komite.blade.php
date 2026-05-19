@@ -1,0 +1,67 @@
+@extends('publik.layout', ['title' => 'Struktur Komite', 'header_title' => 'Susunan Pengurus Komite Sekolah', 'custom_css' => "
+    .guru-card { border-radius: 10px; border: 1px solid #e2e8f0; background: #fff; text-align: center; overflow: hidden; }
+    .guru-card-top { background: #e2e8f0; height: 90px; }
+    .guru-avatar { width: 100px; height: 100px; border-radius: 50%; border: 4px solid #fff; object-fit: cover; margin-top: -50px; position: relative; z-index: 2; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+    .status-badge { position: absolute; top: 10px; right: 10px; background: #f59e0b; color: white; border-radius: 12px; padding: 3px 10px; font-size: 0.75rem; font-weight: bold; }
+    .modal-avatar { width: 100%; border-radius: 15px; border: 4px solid #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+"])
+@section('content')
+<div class='row g-4'>
+    @forelse($komite as $item)
+    <div class='col-6 col-md-4 col-lg-3' data-aos='fade-up'>
+        <div class='guru-card position-relative pb-4 h-100 d-flex flex-column'>
+            <div class='guru-card-top position-relative'>
+                <span class='status-badge'>Pengurus</span>
+            </div>
+            <img src='{{ $item->foto ? asset('storage/'.$item->foto) : 'https://ui-avatars.com/api/?name='.urlencode($item->nama).'&background=f59e0b&color=fff&size=200' }}' loading='lazy' }}' alt='{{ $item->nama }}' class='guru-avatar mx-auto'>
+            <div class='card-body px-3 mt-2 flex-grow-1'>
+                <h6 class='fw-bold text-dark mb-1' style='font-size: 0.95rem;'>{{ $item->nama }}</h6>
+                <p class='text-primary small mb-3 fw-bold'>{{ $item->jabatan }}</p>
+                <button type='button' class='btn btn-primary btn-sm rounded-pill px-4' data-bs-toggle='modal' data-bs-target='#modalKomite{{ $item->id }}'>Lihat Detail</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Detail Komite -->
+    <div class='modal fade' id='modalKomite{{ $item->id }}' tabindex='-1' aria-hidden='true'>
+        <div class='modal-dialog modal-dialog-centered modal-lg'>
+            <div class='modal-content border-0 rounded-4 shadow-lg'>
+                <div class='modal-header border-0 pb-0'>
+                    <button type='button' class='btn-close bg-light rounded-circle p-2' data-bs-dismiss='modal' aria-label='Close'></button>
+                </div>
+                <div class='modal-body p-4 p-md-5 pt-0'>
+                    <div class='row align-items-center'>
+                        <div class='col-md-7 mb-4 mb-md-0'>
+                            <div class='d-flex align-items-center mb-4 pb-3 border-bottom'>
+                                <img src='{{ $item->foto ? asset('storage/'.$item->foto) : 'https://ui-avatars.com/api/?name='.urlencode($item->nama).'&background=f59e0b&color=fff&size=100' }}' alt='Avatar' class='rounded-circle me-3' style='width: 70px; height: 70px; object-fit: cover;'>
+                                <div>
+                                    <h4 class='fw-bold text-dark mb-1'>{{ $item->nama }}</h4>
+                                    <p class='text-warning fw-bold mb-0'>{{ $item->jabatan }}</p>
+                                </div>
+                            </div>
+                            <h6 class='fw-bold text-muted mb-3' style='font-size: 0.85rem; letter-spacing: 1px;'>INFORMASI STRUKTURAL</h6>
+                            <div class='row mb-2'>
+                                <div class='col-5 text-muted small'>Jabatan</div>
+                                <div class='col-7 small fw-bold text-dark'>{{ $item->jabatan }}</div>
+                            </div>
+                            <div class='row mb-2'>
+                                <div class='col-5 text-muted small'>Status</div>
+                                <div class='col-7 small fw-bold text-success'>Aktif</div>
+                            </div>
+                        </div>
+                        <div class='col-md-5 text-center'>
+                            <div class='bg-light p-3 rounded-4'>
+                                <img src='{{ $item->foto ? asset('storage/'.$item->foto) : 'https://ui-avatars.com/api/?name='.urlencode($item->nama).'&background=f59e0b&color=fff&size=500' }}' class='modal-avatar mb-3 bg-white'>
+                                <span class='badge bg-warning text-dark rounded-pill px-3 py-2 w-100'>{{ $item->jabatan }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @empty
+    <div class='col-12 text-center py-5'><p class='text-muted fs-5'>Belum ada data Komite.</p></div>
+    @endforelse
+</div>
+@endsection

@@ -1,123 +1,187 @@
 <?php
 
 /**
- * Global Helper Functions
- * 
- * File ini berisi fungsi-fungsi pembantu (helpers) yang sering digunakan
- * di seluruh aplikasi. Tujuannya adalah untuk mempermudah penulisan kode
- * oleh junior programmer.
+ * Global helper functions untuk menggantikan Laravel helpers.
+ * File ini di-require otomatis via composer autoload.
  */
 
 if (!function_exists('view')) {
-    /**
-     * Memanggil template view BladeOne.
-     * 
-     * @param string $view Nama file view (contoh: 'home.index')
-     * @param array $data Data yang dikirim ke view
-     * @return string Hasil render HTML
-     */
-    function view($view, $data = []) {
-        return \App\Core\App::view($view, $data);
-    }
-}
-
-if (!function_exists('json')) {
-    /**
-     * Mengembalikan response berupa JSON (untuk keperluan API atau AJAX).
-     * 
-     * @param mixed $data Data array atau object
-     * @param int $status HTTP status code (default: 200)
-     */
-    function json($data, $status = 200) {
-        http_response_code($status);
-        header('Content-Type: application/json');
-        echo json_encode($data);
-        exit;
-    }
-}
-
-if (!function_exists('redirect')) {
-    /**
-     * Melakukan redirect ke URL tertentu.
-     * 
-     * @param string $path Path tujuan (contoh: '/login')
-     */
-    function redirect($path) {
-        header("Location: " . url($path));
-        exit;
+    function view(string $template, array $data = [])
+    {
+        return \App\Core\View::render($template, $data);
     }
 }
 
 if (!function_exists('url')) {
-    /**
-     * Mendapatkan URL absolut aplikasi.
-     * 
-     * @param string $path Path relatif
-     * @return string URL absolut
-     */
-    function url($path = '') {
-        $baseUrl = rtrim($_ENV['APP_URL'] ?? 'http://localhost:8000', '/');
-        $path = ltrim($path, '/');
-        return $path ? "{$baseUrl}/{$path}" : $baseUrl;
+    function url(string $path = ''): string
+    {
+        $base = rtrim($_ENV['APP_URL'] ?? 'http://localhost:8000', '/');
+        return $base . '/' . ltrim($path, '/');
+    }
+}
+
+if (!function_exists('redirect')) {
+    function redirect(string $url)
+    {
+        // support for route dot notation (admin.berita.index -> /admin/berita)
+        if (strpos($url, '.') !== false && strpos($url, '/') === false) {
+             $url = '/' . str_replace('.', '/', $url);
+             $url = preg_replace('/\/index$/', '', $url);
+        }
+
+        return new class($url) {
+            private $url;
+            public function __construct($url) { $this->url = $url; }
+            public function route($name) {
+                 $this->url = '/' . str_replace('.', '/', $name);
+                 $this->url = preg_replace('/\/index$/', '', $this->url);
+                 return $this;
+            }
+            public function with($key, $value = null) {
+                \App\Core\Session::setFlash($key, $value);
+                return $this;
+            }
+            public function __destruct() {
+                // Prevent duplicate headers during testing or multiple calls
+                if (!headers_sent()) {
+                    header('Location: ' . $this->url);
+                    exit;
+                }
+            }
+        };
     }
 }
 
 if (!function_exists('asset')) {
-    /**
-     * Mendapatkan URL untuk aset public (CSS, JS, Images).
-     * 
-     * @param string $path Path aset di folder public
-     * @return string URL aset
-     */
-    function asset($path) {
-        return url('assets/' . ltrim($path, '/'));
-    }
-}
-
-if (!function_exists('csrf_token')) {
-    /**
-     * Mendapatkan CSRF Token untuk proteksi form.
-     * 
-     * @return string CSRF token
-     */
-    function csrf_token() {
-        return \App\Core\Security::getCsrfToken();
+    function asset(string $path): string
+    {
+        $base = rtrim($_ENV['APP_URL'] ?? 'http://localhost:8000', '/');
+        return $base . '/' . ltrim($path, '/');
     }
 }
 
 if (!function_exists('csrf_field')) {
-    /**
-     * Membuat input hidden untuk CSRF Token.
-     * 
-     * @return string Tag input hidden HTML
-     */
-    function csrf_field() {
-        return '<input type="hidden" name="_token" value="' . csrf_token() . '">';
+    function csrf_field(): string
+    {
+        return '<input type="hidden" name="_token" value="' . \App\Core\Security::generateCsrfToken() . '">';
+    }
+}
+
+if (!function_exists('csrf_token')) {
+    function csrf_token(): string
+    {
+        return \App\Core\Security::generateCsrfToken();
     }
 }
 
 if (!function_exists('old')) {
-    /**
-     * Mendapatkan input lama (old input) setelah validasi gagal.
-     * 
-     * @param string $key Nama field
-     * @param string $default Nilai default jika kosong
-     * @return string Nilai lama
-     */
-    function old($key, $default = '') {
-        return \App\Core\Session::getFlash("old_{$key}") ?? $default;
+    function old(string $key, $default = '')
+    {
+        return \App\Core\Session::getFlash('old_' . $key) ?? $default;
     }
 }
 
-if (!function_exists('env')) {
-    /**
-     * Mengambil nilai dari environment variable (.env).
-     * 
-     * @param string $key Nama key
-     * @param mixed $default Nilai default
-     * @return mixed
-     */
-    function env($key, $default = null) {
-        return $_ENV[$key] ?? $default;
+if (!function_exists('session')) {
+    function session($key = null, $default = null)
+    {
+        if ($key === null) {
+            return \App\Core\Session::class;
+        }
+        // Support array: session(['key' => 'value'])
+        if (is_array($key)) {
+            foreach ($key as $k => $v) {
+                \App\Core\Session::set($k, $v);
+            }
+            return;
+        }
+        return \App\Core\Session::get($key, $default);
+    }
+}
+
+if (!function_exists('auth')) {
+    function auth()
+    {
+        return new class {
+            public function check() { return \App\Core\Auth::check(); }
+            public function user()  { return \App\Core\Auth::user(); }
+            public function id()    { return \App\Core\Session::get('user_id'); }
+        };
+    }
+}
+
+if (!function_exists('back')) {
+    function back()
+    {
+        $referer = $_SERVER['HTTP_REFERER'] ?? '/';
+        return new class($referer) {
+            private $url;
+            public function __construct($url) { $this->url = $url; }
+            public function with($key, $value = null) {
+                \App\Core\Session::setFlash($key, $value);
+                return $this;
+            }
+            public function __destruct() {
+                header('Location: ' . $this->url);
+                exit;
+            }
+        };
+    }
+}
+
+if (!function_exists('now')) {
+    function now(): string
+    {
+        return date('Y-m-d H:i:s');
+    }
+}
+
+if (!function_exists('compact')) {
+    // PHP already has compact() built-in, no override needed
+}
+
+if (!function_exists('abort')) {
+    function abort(int $code = 404, string $message = '')
+    {
+        http_response_code($code);
+        $messages = [
+            404 => '404 - Halaman Tidak Ditemukan',
+            403 => '403 - Akses Ditolak',
+            500 => '500 - Kesalahan Server',
+        ];
+        die($messages[$code] ?? $message ?: 'Error ' . $code);
+    }
+}
+
+if (!function_exists('route')) {
+    function route(string $name, $params = []): string
+    {
+        // Simplified: return URL path as-is (no named routes in native MVC)
+        // Developers should replace route() calls with url() manually
+        return '/' . str_replace('.', '/', $name);
+    }
+}
+
+if (!function_exists('request')) {
+    function request($key = null, $default = null)
+    {
+        if ($key === null) return new \App\Core\Request();
+        return (new \App\Core\Request())->input($key, $default);
+    }
+}
+
+if (!function_exists('config')) {
+    function config(string $key, $default = null)
+    {
+        // Minimal config helper
+        $parts = explode('.', $key, 2);
+        $file  = $parts[0];
+        $subkey = $parts[1] ?? null;
+
+        $configPath = __DIR__ . '/../../config/' . $file . '.php';
+        if (!file_exists($configPath)) return $default;
+
+        $config = require $configPath;
+        if ($subkey === null) return $config;
+        return $config[$subkey] ?? $default;
     }
 }

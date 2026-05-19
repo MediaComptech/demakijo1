@@ -74,7 +74,24 @@ class Router
                         if (class_exists($controllerClass)) {
                             $instance = new $controllerClass();
                             if (method_exists($instance, $function)) {
-                                call_user_func_array([$instance, $function], $matches);
+                                // Dependency Injection untuk Request
+                                $reflection = new \ReflectionMethod($instance, $function);
+                                $params = $reflection->getParameters();
+                                $finalArgs = [];
+                                $matchIndex = 0;
+                                
+                                foreach ($params as $param) {
+                                    $type = $param->getType();
+                                    $typeName = $type ? $type->getName() : '';
+                                    if ($typeName === 'App\Core\Request' || $typeName === 'Illuminate\Http\Request') {
+                                        $finalArgs[] = new \App\Core\Request();
+                                    } else {
+                                        $finalArgs[] = $matches[$matchIndex] ?? null;
+                                        $matchIndex++;
+                                    }
+                                }
+                                
+                                call_user_func_array([$instance, $function], $finalArgs);
                                 return;
                             }
                         }
