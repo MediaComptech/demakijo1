@@ -13,7 +13,8 @@
             "App\\": "app/"
         },
         "files": [
-            "app/Helpers/GlobalHelper.php"
+            "app/Helpers/GlobalHelper.php",
+            "app/Core/LaravelFacades.php"
         ]
     }
 }

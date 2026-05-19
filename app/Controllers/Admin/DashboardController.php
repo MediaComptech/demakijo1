@@ -19,7 +19,7 @@ class DashboardController extends Controller
 
     public function index()
     {
-        $user = Auth::user();
+        $user = \App\Core\Auth::user();
         
         return $this->view('backend.dashboard.index', [
             'user' => $user
