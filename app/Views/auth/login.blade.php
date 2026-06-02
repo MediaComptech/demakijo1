@@ -197,7 +197,7 @@
                 <h2 style="font-family: 'Fredoka One', cursive; font-size: 1.8rem;">Smart School</h2>
                 <p style="font-size: 0.95rem; opacity: 0.9;">Sistem Informasi &amp; Manajemen Pendidikan Berbasis Digital.</p>
                 <div style="margin-top: 20px; background: rgba(255,255,255,0.15); border-radius: 10px; padding: 12px;">
-                    <small>🏫 SDN Demakijo 1 Purworejo</small><br>
+                    <small>🏫 SDN Demakijo 1 Gamping Sleman</small><br>
                     <small>📚 Portal Admin &amp; Manajemen Sekolah</small>
                 </div>
             </div>

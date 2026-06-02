@@ -70,12 +70,23 @@
                     </ul>
                 </div>
                 <div class='col-md-7'>
-                    <div class='ratio ratio-16x9 rounded-3 overflow-hidden border bg-light d-flex align-items-center justify-content-center'>
-                        <!-- Dummy Map Placeholder -->
-                        <div class='text-center text-muted'>
-                            <i class='fas fa-map fs-1 mb-2'></i>
-                            <p class='mb-0 small'>Peta Lokasi Google Maps</p>
-                        </div>
+                    <div class='rounded-3 overflow-hidden border shadow-sm' style='height: 320px;'>
+                        <!-- Google Maps Embed - SDN Demakijo 1, Nogotirto, Gamping, Sleman -->
+                        <iframe
+                            src="https://maps.google.com/maps?q=SDN+Demakijo+1+Nogotirto+Gamping+Sleman+Yogyakarta&output=embed&z=17"
+                            width="100%"
+                            height="320"
+                            style="border:0; display:block;"
+                            allowfullscreen=""
+                            loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade"
+                            title="Peta Lokasi SDN Demakijo 1 Gamping Sleman"
+                        ></iframe>
+                    </div>
+                    <div class="mt-2 text-center">
+                        <a href="https://maps.google.com/maps?q=SDN+Demakijo+1+Nogotirto+Gamping+Sleman+Yogyakarta" target="_blank" class="text-decoration-none text-muted small">
+                            <i class="fas fa-external-link-alt me-1"></i>Buka di Google Maps
+                        </a>
                     </div>
                 </div>
             </div>
