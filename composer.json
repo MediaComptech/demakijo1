@@ -15,6 +15,14 @@
         "files": [
             "app/Helpers/GlobalHelper.php",
             "app/Core/LaravelFacades.php"
+        ],
+        "exclude-from-classmap": [
+            "app/Core/LaravelFacades.php"
         ]
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
     }
 }
