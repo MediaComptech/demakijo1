@@ -12,11 +12,74 @@ if (!function_exists('view')) {
     }
 }
 
-if (!function_exists('url')) {
-    function url(string $path = ''): string
+if (!function_exists('resolveDotNotationRoute')) {
+    function resolveDotNotationRoute(string $name, $param = null): string
     {
+        // Jika sudah berupa path langsung (mulai dengan / atau http/https), kembalikan apa adanya
+        if (strpos($name, '/') === 0 || strpos($name, 'http://') === 0 || strpos($name, 'https://') === 0) {
+            return $name;
+        }
+
+        // Pecah berdasarkan dot
+        $parts = explode('.', $name);
+
+        if ($parts[0] === 'admin' && count($parts) >= 3) {
+            $resource = $parts[1]; // e.g. 'siswa', 'guru', 'ppdb', 'alumni'
+            $action   = $parts[2]; // e.g. 'index', 'create', 'store', 'edit', 'update', 'destroy', 'delete'
+
+            // Dapatkan ID
+            $id = '';
+            if ($param !== null) {
+                if (is_object($param)) {
+                    $id = $param->id ?? ($param->getKey() ?? '');
+                } elseif (is_array($param)) {
+                    $id = $param['id'] ?? reset($param);
+                } else {
+                    $id = $param;
+                }
+            }
+
+            switch ($action) {
+                case 'index':
+                    return "/admin/{$resource}";
+                case 'create':
+                    return "/admin/{$resource}/create";
+                case 'store':
+                    return "/admin/{$resource}";
+                case 'show':
+                    return "/admin/{$resource}/{$id}";
+                case 'edit':
+                    return "/admin/{$resource}/{$id}/edit";
+                case 'update':
+                    return "/admin/{$resource}/{$id}/update";
+                case 'destroy':
+                case 'delete':
+                    return "/admin/{$resource}/{$id}/delete";
+                default:
+                    break;
+            }
+        }
+
+        // Fallback jika bukan dot notation admin CRUD standar
+        $path = '/' . str_replace('.', '/', $name);
+        $path = preg_replace('/\/index$/', '', $path);
+        
+        if ($param !== null) {
+            $id = is_object($param) ? ($param->id ?? $param->getKey() ?? '') : (is_array($param) ? ($param['id'] ?? reset($param)) : $param);
+            if ($id !== '') {
+                $path .= '/' . $id;
+            }
+        }
+        return $path;
+    }
+}
+
+if (!function_exists('url')) {
+    function url(string $path = '', $param = null): string
+    {
+        $resolved = resolveDotNotationRoute($path, $param);
         $base = rtrim($_ENV['APP_URL'] ?? 'http://localhost:8000', '/');
-        return $base . '/' . ltrim($path, '/');
+        return $base . '/' . ltrim($resolved, '/');
     }
 }
 
@@ -153,11 +216,9 @@ if (!function_exists('abort')) {
 }
 
 if (!function_exists('route')) {
-    function route(string $name, $params = []): string
+    function route(string $name, $param = null): string
     {
-        // Simplified: return URL path as-is (no named routes in native MVC)
-        // Developers should replace route() calls with url() manually
-        return '/' . str_replace('.', '/', $name);
+        return resolveDotNotationRoute($name, $param);
     }
 }
 

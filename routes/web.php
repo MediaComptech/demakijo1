@@ -224,7 +224,10 @@ Router::post('/admin/ekstrakurikuler/{id}/delete', 'Backend\EkstrakurikulerContr
 
 // PPDB Admin
 Router::get('/admin/ppdb', 'Backend\PpdbController@index');
-Router::get('/admin/ppdb/{id}', 'Backend\PpdbController@show');
+Router::get('/admin/ppdb/create', 'Backend\PpdbController@create');
+Router::post('/admin/ppdb', 'Backend\PpdbController@store');
+Router::get('/admin/ppdb/{id}', 'Backend\PpdbController@edit');
+Router::get('/admin/ppdb/{id}/edit', 'Backend\PpdbController@edit');
 Router::post('/admin/ppdb/{id}/update', 'Backend\PpdbController@update');
 Router::post('/admin/ppdb/{id}/delete', 'Backend\PpdbController@destroy');
 
@@ -238,6 +241,8 @@ Router::post('/admin/komite/{id}/delete', 'Backend\KomiteController@destroy');
 
 // Alumni
 Router::get('/admin/alumni', 'Backend\AlumniController@index');
+Router::get('/admin/alumni/create', 'Backend\AlumniController@create');
+Router::post('/admin/alumni', 'Backend\AlumniController@store');
 Router::get('/admin/alumni/{id}/edit', 'Backend\AlumniController@edit');
 Router::post('/admin/alumni/{id}/update', 'Backend\AlumniController@update');
 Router::post('/admin/alumni/{id}/delete', 'Backend\AlumniController@destroy');
