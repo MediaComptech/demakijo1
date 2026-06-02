@@ -44,7 +44,7 @@
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 74, 173, 0.6);
+            background: rgba(0, 74, 173, 0.7);
         }
         .login-image-content {
             position: absolute;
@@ -67,100 +67,274 @@
         .brand-logo {
             font-family: 'Fredoka One', cursive;
             color: var(--primary-blue);
-            font-size: 2rem;
-            margin-bottom: 30px;
+            font-size: 1.8rem;
+            margin-bottom: 8px;
             text-align: center;
         }
+        .brand-subtitle {
+            text-align: center;
+            color: #6c757d;
+            font-size: 0.85rem;
+            margin-bottom: 30px;
+        }
+        .form-label { font-weight: 700; font-size: 0.9rem; color: #333; }
+        .input-group-text {
+            background: white;
+            border-right: 0;
+            color: #6c757d;
+        }
         .form-control {
-            border-radius: 10px;
+            border-radius: 0;
             padding: 12px 15px;
-            border: 1px solid #ddd;
+            border-left: 0;
+            border-right: 0;
         }
         .form-control:focus {
-            box-shadow: 0 0 0 3px rgba(56, 182, 255, 0.3);
+            box-shadow: none;
             border-color: var(--secondary-blue);
         }
+        .input-group:focus-within .input-group-text,
+        .input-group:focus-within .input-group-text-right {
+            border-color: var(--secondary-blue);
+        }
+        .input-group {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .input-group .form-control {
+            border: none;
+        }
+        .input-group:focus-within {
+            border-color: var(--secondary-blue);
+            box-shadow: 0 0 0 3px rgba(56, 182, 255, 0.2);
+        }
+        .input-group-text-right {
+            background: white;
+            border: none;
+            cursor: pointer;
+            color: #6c757d;
+            padding: 0 15px;
+            display: flex;
+            align-items: center;
+        }
+        .input-group-text-right:hover { color: var(--primary-blue); }
         .btn-login {
-            background-color: var(--accent-yellow);
+            background: linear-gradient(135deg, var(--accent-yellow), #ffc107);
             color: var(--primary-blue);
             font-weight: 800;
             border-radius: 10px;
-            padding: 12px;
+            padding: 13px;
             border: none;
             width: 100%;
+            font-size: 1rem;
+            letter-spacing: 0.5px;
             transition: all 0.3s ease;
         }
         .btn-login:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 222, 89, 0.4);
+            box-shadow: 0 8px 20px rgba(255, 222, 89, 0.5);
+            color: var(--primary-blue);
         }
-        .password-container {
+        .btn-login:active { transform: translateY(0); }
+        .alert-danger-custom {
+            background: #fff3f3;
+            border: 1px solid #f5c6cb;
+            border-left: 4px solid #dc3545;
+            border-radius: 10px;
+            padding: 12px 15px;
+            color: #721c24;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+        .alert-success-custom {
+            background: #f0fff4;
+            border: 1px solid #c3e6cb;
+            border-left: 4px solid #28a745;
+            border-radius: 10px;
+            padding: 12px 15px;
+            color: #155724;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+        .password-rules {
+            background: #f8f9ff;
+            border: 1px solid #e3e8ff;
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-top: 10px;
+            font-size: 0.8rem;
+            color: #555;
+        }
+        .password-rules ul { margin: 5px 0 0; padding-left: 18px; }
+        .password-rules li { margin-bottom: 2px; }
+        .divider {
+            text-align: center;
+            color: #aaa;
+            font-size: 0.8rem;
+            margin: 20px 0;
             position: relative;
         }
-        .toggle-password {
+        .divider::before, .divider::after {
+            content: '';
             position: absolute;
-            right: 15px;
             top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            color: #6c757d;
+            width: 40%;
+            height: 1px;
+            background: #ddd;
         }
+        .divider::before { left: 0; }
+        .divider::after { right: 0; }
     </style>
 </head>
 <body>
 
-<div class="container px-4">
+<div class="container px-3 py-4">
     <div class="login-card mx-auto">
+        <!-- Panel Kiri: Gambar -->
         <div class="login-image">
             <div class="login-image-content">
-                <h2 style="font-family: 'Fredoka One', cursive;">Smart School</h2>
-                <p>Sistem Informasi & Manajemen Pendidikan Berbasis Digital.</p>
+                <h2 style="font-family: 'Fredoka One', cursive; font-size: 1.8rem;">Smart School</h2>
+                <p style="font-size: 0.95rem; opacity: 0.9;">Sistem Informasi &amp; Manajemen Pendidikan Berbasis Digital.</p>
+                <div style="margin-top: 20px; background: rgba(255,255,255,0.15); border-radius: 10px; padding: 12px;">
+                    <small>🏫 SDN Demakijo 1 Purworejo</small><br>
+                    <small>📚 Portal Admin &amp; Manajemen Sekolah</small>
+                </div>
             </div>
         </div>
+
+        <!-- Panel Kanan: Form Login -->
         <div class="login-form-container">
             <div class="brand-logo">
                 <i class="fas fa-graduation-cap text-warning me-2"></i>SDN Demakijo 1
             </div>
-            
-            <form method="POST" action="{{ url('login') }}">
-                {!! csrf_field() !!}
+            <p class="brand-subtitle">Masuk ke Panel Administrasi Sekolah</p>
+
+            <?php
+            // Tampilkan pesan flash (error/success)
+            $flashError   = \App\Core\Session::getFlash('error');
+            $flashSuccess = \App\Core\Session::getFlash('success');
+            $flashErrors  = \App\Core\Session::getFlash('errors');
+            $oldEmail     = \App\Core\Session::getFlash('old_email');
+            ?>
+
+            <?php if ($flashError): ?>
+            <div class="alert-danger-custom">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                <?= htmlspecialchars($flashError) ?>
+            </div>
+            <?php endif; ?>
+
+            <?php if ($flashSuccess): ?>
+            <div class="alert-success-custom">
+                <i class="fas fa-check-circle me-2"></i>
+                <?= htmlspecialchars($flashSuccess) ?>
+            </div>
+            <?php endif; ?>
+
+            <?php if ($flashErrors && is_array($flashErrors)): ?>
+            <div class="alert-danger-custom">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <strong>Periksa input Anda:</strong>
+                <ul class="mb-0 mt-1">
+                    <?php foreach ($flashErrors as $err): ?>
+                    <li><?= htmlspecialchars($err) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+            <?php endif; ?>
+
+            <form method="POST" action="/login" id="loginForm" autocomplete="off">
+                <?= csrf_field() ?>
+
+                <!-- Field Email -->
                 <div class="mb-4">
-                    <label for="email" class="form-label fw-bold">Alamat Email</label>
+                    <label for="email" class="form-label">
+                        <i class="fas fa-envelope me-1" style="color: var(--secondary-blue);"></i>
+                        Alamat Email
+                    </label>
                     <div class="input-group">
-                        <span class="input-group-text bg-white border-end-0"><i class="fas fa-envelope text-muted"></i></span>
-                        <input type="email" class="form-control border-start-0 @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}" required autofocus placeholder="Masukkan email anda">
-                    </div>
-                    @error('email')
-                        <div class="text-danger mt-1 small">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="mb-4">
-                    <label for="password" class="form-label fw-bold">Kata Sandi</label>
-                    <div class="input-group password-container">
-                        <span class="input-group-text bg-white border-end-0"><i class="fas fa-lock text-muted"></i></span>
-                        <input type="password" class="form-control border-start-0 border-end-0 @error('password') is-invalid @enderror" id="password" name="password" required placeholder="Masukkan kata sandi">
-                        <span class="input-group-text bg-white toggle-password" onclick="togglePassword()">
-                            <i class="fas fa-eye" id="eyeIcon"></i>
+                        <span class="input-group-text">
+                            <i class="fas fa-at"></i>
                         </span>
+                        <input
+                            type="email"
+                            class="form-control"
+                            id="email"
+                            name="email"
+                            value="<?= htmlspecialchars($oldEmail ?? '') ?>"
+                            required
+                            autofocus
+                            placeholder="nama@sekolah.sch.id"
+                            autocomplete="username"
+                        >
                     </div>
-                    @error('password')
-                        <div class="text-danger mt-1 small">{{ $message }}</div>
-                    @enderror
                 </div>
 
+                <!-- Field Password -->
+                <div class="mb-1">
+                    <label for="password" class="form-label">
+                        <i class="fas fa-lock me-1" style="color: var(--secondary-blue);"></i>
+                        Kata Sandi
+                    </label>
+                    <div class="input-group" id="passwordGroup">
+                        <span class="input-group-text">
+                            <i class="fas fa-key"></i>
+                        </span>
+                        <input
+                            type="password"
+                            class="form-control"
+                            id="password"
+                            name="password"
+                            required
+                            placeholder="Masukkan kata sandi"
+                            autocomplete="current-password"
+                        >
+                        <button
+                            type="button"
+                            class="input-group-text-right"
+                            id="togglePasswordBtn"
+                            onclick="togglePassword()"
+                            title="Tampilkan/sembunyikan password"
+                            aria-label="Toggle show password"
+                        >
+                            <i class="fas fa-eye" id="eyeIcon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Password Rules Info -->
+                <div class="password-rules mb-3">
+                    <strong>ℹ️ Aturan Password:</strong>
+                    <ul>
+                        <li>Masukkan password persis seperti yang ditetapkan (huruf besar/kecil sensitif)</li>
+                        <li>Karakter khusus seperti <code>!</code>, <code>@</code>, <code>#</code> diperbolehkan</li>
+                        <li>Gunakan tombol 👁️ untuk memeriksa input password Anda</li>
+                    </ul>
+                </div>
+
+                <!-- Remember Me & Lupa Sandi -->
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="remember" id="remember">
-                        <label class="form-check-label text-muted" for="remember">Ingat Saya</label>
+                        <label class="form-check-label text-muted small" for="remember">Ingat Saya</label>
                     </div>
-                    <a href="{{ url('password-reset') }}" class="text-decoration-none small" style="color: var(--primary-blue);">Lupa Sandi?</a>
+                    <a href="/password-reset" class="text-decoration-none small" style="color: var(--primary-blue);">
+                        <i class="fas fa-question-circle me-1"></i>Lupa Sandi?
+                    </a>
                 </div>
 
-                <button type="submit" class="btn btn-login mb-3">Login ke Dashboard <i class="fas fa-sign-in-alt ms-2"></i></button>
-                
-                <div class="text-center mt-4">
-                    <a href="/" class="text-muted text-decoration-none small"><i class="fas fa-arrow-left me-1"></i> Kembali ke Beranda</a>
+                <!-- Tombol Login -->
+                <button type="submit" class="btn btn-login mb-3" id="loginBtn">
+                    <i class="fas fa-sign-in-alt me-2"></i>Login ke Dashboard
+                </button>
+
+                <div class="divider">atau</div>
+
+                <div class="text-center">
+                    <a href="/" class="text-muted text-decoration-none small">
+                        <i class="fas fa-arrow-left me-1"></i>Kembali ke Beranda Sekolah
+                    </a>
                 </div>
             </form>
         </div>
@@ -168,20 +342,44 @@
 </div>
 
 <script>
+    // ===== Toggle Show/Hide Password =====
     function togglePassword() {
         const passwordInput = document.getElementById('password');
         const eyeIcon = document.getElementById('eyeIcon');
-        
+        const btn = document.getElementById('togglePasswordBtn');
+
         if (passwordInput.type === 'password') {
             passwordInput.type = 'text';
             eyeIcon.classList.remove('fa-eye');
             eyeIcon.classList.add('fa-eye-slash');
+            btn.title = 'Sembunyikan password';
         } else {
             passwordInput.type = 'password';
             eyeIcon.classList.remove('fa-eye-slash');
             eyeIcon.classList.add('fa-eye');
+            btn.title = 'Tampilkan password';
         }
+
+        // Kembalikan fokus ke input
+        passwordInput.focus();
     }
+
+    // ===== Prevent double submit =====
+    document.getElementById('loginForm').addEventListener('submit', function() {
+        const btn = document.getElementById('loginBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Memproses...';
+    });
+
+    // ===== Auto hide alerts setelah 10 detik =====
+    setTimeout(function() {
+        const alerts = document.querySelectorAll('.alert-danger-custom, .alert-success-custom');
+        alerts.forEach(function(el) {
+            el.style.transition = 'opacity 0.5s';
+            el.style.opacity = '0';
+            setTimeout(function() { el.style.display = 'none'; }, 500);
+        });
+    }, 10000);
 </script>
 </body>
 </html>

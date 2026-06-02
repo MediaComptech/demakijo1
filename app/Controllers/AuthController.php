@@ -25,7 +25,10 @@ class AuthController extends Controller
     public function loginAction()
     {
         $email    = $this->input('email');
-        $password = $this->input('password');
+        // PENTING: Ambil password langsung dari $_POST, JANGAN pakai $this->input()
+        // karena htmlspecialchars() akan mengubah karakter seperti ! & " < > 
+        // dan menyebabkan password_verify() selalu gagal.
+        $password = $_POST['password'] ?? '';
 
         // Validasi input
         $validator = new Validator();

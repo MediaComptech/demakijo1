@@ -54,8 +54,8 @@ class Router
         // Cari route yang cocok
         if (isset(self::$routes[$method])) {
             foreach (self::$routes[$method] as $routeUri => $action) {
-                // Konversi parameter route (misal: {id} menjadi regex)
-                $routeRegex = preg_replace('/\{([a-zA-Z0-9_]+)\}/', '([a-zA-Z0-9_]+)', $routeUri);
+                // Konversi parameter route (misal: {id} menjadi regex) — dukung huruf, angka, underscore, dan hyphen
+                $routeRegex = preg_replace('/\{([a-zA-Z0-9_]+)\}/', '([a-zA-Z0-9_\-]+)', $routeUri);
                 $routeRegex = "#^" . $routeRegex . "$#";
 
                 if (preg_match($routeRegex, $uri, $matches)) {

@@ -34,7 +34,9 @@ class User extends Model
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed',
+        // CATATAN: Jangan gunakan 'hashed' cast di sini!
+        // Auth::attempt() menggunakan password_verify() secara langsung.
+        // Cast 'hashed' akan menyebabkan double-hashing dan login selalu gagal.
     ];
 
     // Dummy method untuk HasRoles fallback jika digunakan di views
