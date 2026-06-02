@@ -1,0 +1,20 @@
+# Environment files
+.env.local
+.env.development
+.env.staging
+.env.production
+.env.backup
+.env.*.local
+
+# Dependency directories
+/composer.phar
+
+# Application cache and logs
+/storage/cache/*
+!/storage/cache/.gitkeep
+*.log
+error_log
+
+# OS files
+.DS_Store
+Thumbs.db
