@@ -48,7 +48,10 @@ class Router
 
         // Cek apakah method spoofing digunakan (misal: untuk PUT/DELETE via POST)
         if ($method === 'POST' && isset($_POST['_method'])) {
-            $method = strtoupper($_POST['_method']);
+            $spoofed = strtoupper($_POST['_method']);
+            if (isset(self::$routes[$spoofed])) {
+                $method = $spoofed;
+            }
         }
 
         // Cari route yang cocok
