@@ -18,8 +18,9 @@ Router::get('/', function () {
     $siswaCount  = $setting && $setting->jumlah_siswa ? $setting->jumlah_siswa : \App\Models\Siswa::count();
     $guruCount   = $setting && $setting->jumlah_guru  ? $setting->jumlah_guru  : \App\Models\Guru::count();
     $alumniCount = $setting && $setting->jumlah_alumni ? $setting->jumlah_alumni : \App\Models\Alumni::where('is_verified', true)->count();
+    $akreditasi  = $setting && $setting->akreditasi ? $setting->akreditasi : 'A';
     $latest_berita = \App\Models\Berita::with('kategori')->where('is_published', true)->latest()->take(3)->get();
-    return \App\Core\View::render('welcome', compact('setting', 'keunggulan', 'siswaCount', 'guruCount', 'alumniCount', 'latest_berita'));
+    return \App\Core\View::render('welcome', compact('setting', 'keunggulan', 'siswaCount', 'guruCount', 'alumniCount', 'akreditasi', 'latest_berita'));
 });
 
 Router::get('/offline', function () {

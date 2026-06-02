@@ -128,4 +128,18 @@ class Hash
         $cost = $options['rounds'] ?? 10;
         return password_needs_rehash($hashedValue, PASSWORD_BCRYPT, ['cost' => $cost]);
     }
+
+    public static function isHashed($value): bool
+    {
+        if (!is_string($value)) {
+            return false;
+        }
+        $info = password_get_info($value);
+        return $info['algo'] !== 0;
+    }
+
+    public static function verifyConfiguration($value = null): bool
+    {
+        return true;
+    }
 }
