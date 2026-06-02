@@ -265,7 +265,7 @@
                             value="<?= htmlspecialchars($oldEmail ?? '') ?>"
                             required
                             autofocus
-                            placeholder="nama@sekolah.sch.id"
+                            placeholder="admin@sdndemakijo1.sch.id"
                             autocomplete="username"
                         >
                     </div>

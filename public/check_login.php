@@ -21,8 +21,8 @@ require __DIR__ . '/../vendor/autoload.php';
 use Illuminate\Database\Capsule\Manager as Capsule;
 
 $action = $_GET['action'] ?? 'info';
-$newPassword = $_GET['newpass'] ?? 'Admin@2026!';
-$newEmail    = $_GET['email']   ?? 'admin@demakijo1.sch.id';
+$newPassword = $_GET['newpass'] ?? 'DemakijoAdmin2026!';
+$newEmail    = $_GET['email']   ?? 'admin@sdndemakijo1.sch.id'; // Email sesuai data di DB
 
 ?><!DOCTYPE html>
 <html lang="id">
@@ -160,17 +160,21 @@ if ($action === 'reset' || $action === 'create') {
 <form method="get" action="">
 <input type="hidden" name="token" value="<?= htmlspecialchars($SECRET_TOKEN) ?>">
 <input type="hidden" name="action" value="info">
-<label>Email: <input type="text" name="test_email" value="admin@demakijo1.sch.id" style="background:#0f0f23;color:#fff;border:1px solid #333;padding:5px;"></label><br><br>
-<label>Password: <input type="text" name="test_pass" value="" style="background:#0f0f23;color:#fff;border:1px solid #333;padding:5px;" placeholder="Test password di sini"></label><br><br>
-<button type="submit" class="btn">🔍 Test Verifikasi</button>
+<label>Email: <input type="text" name="test_email" value="admin@sdndemakijo1.sch.id" style="background:#0f0f23;color:#fff;border:1px solid #333;padding:5px; width:280px;"></label><br><br>
+<label>Password: <input type="text" name="test_pass" value="" style="background:#0f0f23;color:#fff;border:1px solid #333;padding:5px; width:280px;" placeholder="Test password di sini"></label><br><br>
+<button type="submit" class="btn">🔍 Test Verifikasi Password</button>
 </form>
 
-<h3>Reset/Buat Admin:</h3>
-<a href="?token=<?= $SECRET_TOKEN ?>&action=reset&email=admin@demakijo1.sch.id&newpass=Admin@2026!" class="btn btn-danger">
-🔑 Reset Password Admin (Admin@2026!)
-</a>
-<a href="?token=<?= $SECRET_TOKEN ?>&action=create&email=admin@demakijo1.sch.id&newpass=Admin@2026!" class="btn btn-success">
-➕ Buat User Admin Baru
+<h3>Reset Password — Pilih akun yang ada di DB:</h3>
+<p class="warn">⚠️ Email di database: <strong>admin@sdndemakijo1.sch.id</strong> dan <strong>operator@sdndemakijo1.sch.id</strong></p>
+<a href="?token=<?= $SECRET_TOKEN ?>&action=reset&email=admin@sdndemakijo1.sch.id&newpass=DemakijoAdmin2026!" class="btn btn-danger">
+🔑 Reset: admin@sdndemakijo1.sch.id → DemakijoAdmin2026!
+</a><br><br>
+<a href="?token=<?= $SECRET_TOKEN ?>&action=reset&email=operator@sdndemakijo1.sch.id&newpass=DemakijoAdmin2026!" class="btn btn-danger">
+🔑 Reset: operator@sdndemakijo1.sch.id → DemakijoAdmin2026!
+</a><br><br>
+<a href="?token=<?= $SECRET_TOKEN ?>&action=create&email=admin@sdndemakijo1.sch.id&newpass=DemakijoAdmin2026!" class="btn btn-success">
+➕ Buat User Admin Baru (jika belum ada)
 </a>
 </div>
 
