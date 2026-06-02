@@ -11,6 +11,21 @@ class Request
     {
         $this->data = array_merge($_GET, $_POST);
         $this->files = $_FILES;
+
+        // Bersihkan parameter routing yang masuk ke $_GET akibat rewrite rule htaccess (.php?$1)
+        $uri = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
+        $scriptName = dirname($_SERVER['SCRIPT_NAME'] ?? '');
+        if ($scriptName !== '/' && $scriptName !== '\\') {
+            $uri = str_replace($scriptName, '', $uri);
+        }
+        $path = trim($uri, '/');
+        
+        if (isset($this->data[$path])) {
+            unset($this->data[$path]);
+        }
+        if (isset($this->data[$path . '/'])) {
+            unset($this->data[$path . '/']);
+        }
     }
 
     public function input($key = null, $default = null)
