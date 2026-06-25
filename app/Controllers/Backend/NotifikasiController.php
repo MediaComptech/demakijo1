@@ -22,7 +22,7 @@ class NotifikasiController extends Controller
         $request->validate(["title" => "required", "body" => "required"]);
 
         // Store notification in session to be broadcast via JS
-        session()->flash("push_notif", [
+        \App\Core\Session::setFlash("push_notif", [
             "title" => $request->title,
             "body"  => $request->body,
             "url"   => $request->url ?? "/",
@@ -37,7 +37,7 @@ class NotifikasiController extends Controller
         ];
         \Illuminate\Support\Facades\Cache::put("last_push_notif", $log, 3600);
 
-        return redirect()->back()->with("success", "Notifikasi berhasil dikirim!");
+        return back()->with("success", "Notifikasi berhasil dikirim!");
     }
 }
 
