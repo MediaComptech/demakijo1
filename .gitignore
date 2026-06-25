@@ -15,6 +15,10 @@
 *.log
 error_log
 
+# Database exports (mengandung data sensitif)
+docs/database_export.sql
+*.sql
+
 # OS files
 .DS_Store
 Thumbs.db
