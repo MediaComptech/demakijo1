@@ -12,8 +12,11 @@
     <!-- AdminLTE v4 (Bootstrap 5) CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-alpha2/dist/css/adminlte.min.css">
     
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
     @stack('styles')
-    
+
     <style>
         .sidebar-dark-primary {
             background-color: #003366 !important; /* Biru korporat sekolah */
@@ -249,6 +252,38 @@
         <!-- Main content -->
         <div class="app-content">
             <div class="container-fluid">
+
+                {{-- ============================================================ --}}
+                {{-- FLASH MESSAGES (Bootstrap alerts — fallback tampilan inline)  --}}
+                {{-- ============================================================ --}}
+                @if(!empty($flash_success))
+                    <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+                        <i class="fas fa-check-circle me-2"></i><strong>Berhasil!</strong> {{ $flash_success }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+
+                @if(!empty($flash_error))
+                    <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+                        <i class="fas fa-times-circle me-2"></i><strong>Gagal!</strong> {{ $flash_error }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+
+                @if(!empty($flash_warning))
+                    <div class="alert alert-warning alert-dismissible fade show shadow-sm" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i><strong>Perhatian!</strong> {{ $flash_warning }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+
+                @if(!empty($flash_info))
+                    <div class="alert alert-info alert-dismissible fade show shadow-sm" role="alert">
+                        <i class="fas fa-info-circle me-2"></i>{{ $flash_info }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+
                 @yield('content')
             </div><!-- /.container-fluid -->
         </div>
@@ -273,5 +308,76 @@
 <script src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-alpha2/dist/js/adminlte.min.js"></script>
 
 @stack('scripts')
+
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+{{-- SweetAlert2 Toast Notifikasi dari Flash Session --}}
+@if(!empty($flash_success))
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    Swal.fire({
+        icon: 'success',
+        title: 'Berhasil!',
+        text: '{{ addslashes($flash_success) }}',
+        toast: true,
+        position: 'top-end',
+        timer: 4000,
+        timerProgressBar: true,
+        showConfirmButton: false
+    });
+});
+</script>
+@endif
+
+@if(!empty($flash_error))
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    Swal.fire({
+        icon: 'error',
+        title: 'Gagal!',
+        text: '{{ addslashes($flash_error) }}',
+        toast: true,
+        position: 'top-end',
+        timer: 5000,
+        timerProgressBar: true,
+        showConfirmButton: false
+    });
+});
+</script>
+@endif
+
+@if(!empty($flash_warning))
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    Swal.fire({
+        icon: 'warning',
+        title: 'Perhatian!',
+        text: '{{ addslashes($flash_warning) }}',
+        toast: true,
+        position: 'top-end',
+        timer: 5000,
+        timerProgressBar: true,
+        showConfirmButton: false
+    });
+});
+</script>
+@endif
+
+@if(!empty($flash_info))
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    Swal.fire({
+        icon: 'info',
+        text: '{{ addslashes($flash_info) }}',
+        toast: true,
+        position: 'top-end',
+        timer: 4000,
+        timerProgressBar: true,
+        showConfirmButton: false
+    });
+});
+</script>
+@endif
 </body>
 </html>

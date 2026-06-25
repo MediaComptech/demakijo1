@@ -120,6 +120,12 @@ class View
                 $data['errors'] = new ViewMessageBag($sessionErrors);
             }
 
+            // Auto-pass semua flash messages ke view
+            $data['flash_success'] = $data['flash_success'] ?? \App\Core\Session::getFlash('success');
+            $data['flash_error']   = $data['flash_error']   ?? \App\Core\Session::getFlash('error');
+            $data['flash_warning'] = $data['flash_warning'] ?? \App\Core\Session::getFlash('warning');
+            $data['flash_info']    = $data['flash_info']    ?? \App\Core\Session::getFlash('info');
+
             echo self::$blade->run($view, $data);
         } catch (\Exception $e) {
             echo "Error rendering view [{$view}]: " . $e->getMessage();
