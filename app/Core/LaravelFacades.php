@@ -64,6 +64,21 @@ class Cache
     {
         return $default;
     }
+
+    public static function put($key, $value, $ttl = null): bool
+    {
+        return true; // stub — no real cache in this framework
+    }
+
+    public static function has($key): bool
+    {
+        return false;
+    }
+
+    public static function flush(): bool
+    {
+        return true;
+    }
 }
 
 class Log

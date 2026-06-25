@@ -137,6 +137,9 @@ Router::post('/logout', 'AuthController@logoutAction');
 // RUTE ADMIN (Semua butuh login - dicek di masing-masing controller)
 // ============================================================
 Router::get('/dashboard', 'Admin\DashboardController@index');
+Router::get('/admin', 'Admin\DashboardController@index');
+Router::get('/admin/dashboard', 'Admin\DashboardController@index');
+
 
 // Kategori Berita
 Router::get('/admin/kategori-berita', 'Backend\KategoriBeritaController@index');

@@ -28,57 +28,43 @@ class KeunggulanController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'judul'     => 'required|string|max:255',
-            'deskripsi' => 'nullable|string',
-            'icon'      => 'required|string|max:100',
-            'urutan'    => 'nullable|integer',
-        ]);
-
         KeunggulanSekolah::create([
             'icon'      => $request->icon,
             'judul'     => $request->judul,
             'deskripsi' => $request->deskripsi,
             'urutan'    => $request->urutan ?? 0,
-            'is_active' => $request->has('is_active'),
+            'is_active' => $request->has('is_active') ? 1 : 0,
         ]);
 
         redirect('/admin/keunggulan')
             ->with('success', 'Data keunggulan berhasil ditambahkan!');
     }
 
-    public function edit(KeunggulanSekolah $keunggulan)
+    public function edit($id)
     {
+        $keunggulan = KeunggulanSekolah::findOrFail($id);
         return view('backend.keunggulan.edit', compact('keunggulan'));
     }
 
-    public function update(Request $request, KeunggulanSekolah $keunggulan)
+    public function update(Request $request, $id)
     {
-        $request->validate([
-            'judul'     => 'required|string|max:255',
-            'deskripsi' => 'nullable|string',
-            'icon'      => 'required|string|max:100',
-            'urutan'    => 'nullable|integer',
-        ]);
-
+        $keunggulan = KeunggulanSekolah::findOrFail($id);
         $keunggulan->update([
             'icon'      => $request->icon,
             'judul'     => $request->judul,
             'deskripsi' => $request->deskripsi,
             'urutan'    => $request->urutan ?? 0,
-            'is_active' => $request->has('is_active'),
+            'is_active' => $request->has('is_active') ? 1 : 0,
         ]);
 
         redirect('/admin/keunggulan')
             ->with('success', 'Data keunggulan berhasil diperbarui!');
     }
 
-    public function destroy(KeunggulanSekolah $keunggulan)
+    public function destroy($id)
     {
-        $keunggulan->delete();
+        KeunggulanSekolah::findOrFail($id)->delete();
         redirect('/admin/keunggulan')
             ->with('success', 'Data keunggulan berhasil dihapus!');
     }
 }
-
-
