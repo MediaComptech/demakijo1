@@ -6,8 +6,9 @@
  * File ini adalah gerbang utama yang dipanggil oleh server web.
  */
 
-// Menampilkan error untuk mode development (ubah ke 0 di production)
-ini_set('display_errors', 1);
+// Production: sembunyikan error dari browser, catat ke error_log server
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
 error_reporting(E_ALL);
 
 // Load Composer Autoloader
