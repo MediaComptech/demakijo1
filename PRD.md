@@ -255,6 +255,21 @@ Model memperluas `App\Core\Model` yang secara langsung merupakan turunan dari `I
 
 ---
 
+## 📱 Progressive Web App (PWA) & Sistem Robustness
+
+### 1. Progressive Web App (PWA)
+Sistem ini memenuhi standar Progressive Web App dasar untuk meningkatkan aksesibilitas dan user experience perangkat mobile:
+*   **Web App Manifest**: Menggunakan `public/manifest.json` untuk nama aplikasi, ikon, warna tema (`#004aad`), dan mode layar mandiri (`standalone`).
+*   **Service Worker**: File `public/service-worker.js` bertugas mengelola siklus caching static assets untuk penjelajahan luring dasar (offline page).
+*   **iOS Support**: Dilengkapi meta tags `apple-mobile-web-app-capable` dan tautan `apple-touch-icon`.
+
+### 2. Mekanisme Keamanan & Ketahanan Simpan Data (Robustness)
+*   **Sistem Deteksi Duplikasi Slug**: Semua data dengan kolom `slug` bertipe `UNIQUE` menggunakan helper global `unique_slug()`. Helper ini menguji keberadaan slug baru di database dan secara dinamis menambahkan akhiran angka bertahap (misal: `-1`, `-2`, dst) jika terjadi tabrakan.
+*   **Global Exception Handling di Router**: Segala macam kegagalan query database (`QueryException`) dan error runtime (`Throwable`) saat mengeksekusi controller ditangkap secara terpusat oleh `app/Core/Router.php`. Router kemudian mengarahkan kembali user ke halaman asal beserta notifikasi toast SweetAlert2 yang mendetail sesuai tipe error (misal: duplikasi data, nilai wajib yang kosong, dst).
+*   **Sanitisasi Nullable Unique Constraints**: Mengantisipasi pelanggaran unik database akibat inputan kosong (`''`) dari form pada field opsional yang memiliki konstrain `UNIQUE` (seperti `nisn` pada tabel siswa). Sistem secara otomatis mengonversi string kosong tersebut menjadi `null` sebelum disimpan.
+
+---
+
 ## 📝 Panduan Praktis Pengembangan untuk AI & Junior Developer
 
 Untuk menambahkan fitur baru, ikuti pedoman sederhana berikut:

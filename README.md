@@ -83,6 +83,17 @@ Repositori ini adalah hasil konversi penuh dari **Laravel** ke arsitektur **Nati
 | Manajemen User | `/admin/user` | CRUD akun pengguna |
 | Pengaturan Website | `/admin/pengaturan` | Logo, slider, info sekolah, kontak |
 
+### 📱 Progressive Web App (PWA)
+Aplikasi ini sudah dikonfigurasi sebagai **PWA (Progressive Web App)** sehingga dapat diinstal di perangkat Android, iOS, maupun Desktop langsung dari web browser.
+- **Offline Support**: Terintegrasi dengan `service-worker.js` untuk caching halaman luring statis dasar.
+- **Manifest**: Menggunakan `manifest.json` untuk konfigurasi ikon aplikasi, nama, warna tema (`#004aad`), dan mode tampilan (standalone).
+- **Aset PWA**: Ikon aplikasi responsif (`logo-192.png` & `logo-512.png`) disimpan di folder `public`.
+
+### 🛡️ Ketahanan & Keamanan CRUD Database
+- **Automatic Unique Slugs**: Semua entri berita, agenda, album, pengumuman, dan prestasi menggunakan generator `unique_slug()` untuk menghindari duplikasi slug secara otomatis dengan menambahkan akhiran angka jika terdeteksi tabrakan (misal: `-1`, `-2`).
+- **Global DB Handler**: Router aplikasi membungkus eksekusi controller dalam blok try-catch. Setiap kesalahan SQL (seperti input kosong pada field wajib, referensi asing gagal, atau nilai duplikat) ditangkap secara otomatis, dicatat ke log, dan pengguna diredirect kembali dengan SweetAlert2 toast notification yang ramah.
+- **Form Safety**: Penanganan khusus pada data siswa dan alumni untuk mengubah input kosong (`''`) menjadi `NULL` secara otomatis agar tidak memicu error konstrain unik (`UNIQUE`) database.
+
 ---
 
 ## 🏗️ Arsitektur Sistem
