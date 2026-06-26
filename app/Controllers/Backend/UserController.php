@@ -30,18 +30,20 @@ class UserController extends Controller
     {
         $request->validate([
             'name'     => 'required',
-            'email'    => 'required|email',
-            'password' => 'required',
+            'email'    => 'required|email|unique:users,email',
+            'password' => 'required|min:6',
         ]);
 
         User::create([
             'name'     => $request->name,
             'email'    => $request->email,
-            'password' => Hash::make($request->password),
+            'password' => Hash::make($_POST['password'] ?? ''),
             'role'     => $request->role ?? 'admin',
         ]);
 
-        redirect('/admin/user')->with('success', 'User berhasil ditambahkan');
+        \App\Core\Session::setFlash('success', 'User berhasil ditambahkan');
+        header('Location: /admin/user');
+        exit;
     }
 
     public function edit($id)
@@ -53,23 +55,34 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         $user  = User::findOrFail($id);
-        $input = $request->except('_token', '_method', 'password');
+        $input = [
+            'name'  => $request->name,
+            'email' => $request->email,
+            'role'  => $request->role ?? $user->role ?? 'admin',
+        ];
 
-        if ($request->filled('password')) {
-            $input['password'] = Hash::make($request->password);
+        // Update password hanya jika diisi (ambil dari $_POST langsung agar karakter spesial tidak di-escape)
+        $rawPassword = $_POST['password'] ?? '';
+        if ($rawPassword !== '') {
+            $input['password'] = Hash::make($rawPassword);
         }
 
         $user->update($input);
-        redirect('/admin/user')->with('success', 'User berhasil diubah');
+        \App\Core\Session::setFlash('success', 'User berhasil diubah');
+        header('Location: /admin/user');
+        exit;
     }
 
     public function destroy($id)
     {
-        if ($id == 1) {
-            redirect('/admin/user')->with('error', 'Super Admin tidak bisa dihapus!');
-            return;
+        if ((int) $id === 1) {
+            \App\Core\Session::setFlash('error', 'Super Admin tidak bisa dihapus!');
+            header('Location: /admin/user');
+            exit;
         }
         User::findOrFail($id)->delete();
-        redirect('/admin/user')->with('success', 'User berhasil dihapus');
+        \App\Core\Session::setFlash('success', 'User berhasil dihapus');
+        header('Location: /admin/user');
+        exit;
     }
 }

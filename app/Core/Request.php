@@ -91,10 +91,10 @@ class Request
      * Validasi sederhana. Redirect balik dengan flash error jika gagal.
      * Rules yang didukung: required, email, min:N, unique:table[,column[,ignoreId]]
      */
-    public function validate(array $rules): bool
+    public function validate(array $rules, array $messages = []): bool
     {
         $validator = new Validator();
-        if (!$validator->make($this->data, $rules)) {
+        if (!$validator->make($this->data, $rules, $messages)) {
             Session::setFlash('errors', $validator->errors());
             foreach ($this->data as $k => $v) {
                 Session::setFlash('old_' . $k, $v);

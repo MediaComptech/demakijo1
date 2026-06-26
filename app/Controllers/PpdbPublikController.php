@@ -23,18 +23,18 @@ class PpdbPublikController extends Controller
             'nama_ibu'       => 'required|string',
             'no_telp'        => 'required|string',
         ], [
-            'nik.unique'         => 'NIK ini sudah terdaftar. Setiap anak hanya dapat mendaftar satu kali.',
-            'nik.digits'         => 'NIK harus terdiri dari 16 digit angka.',
-            'jenis_kelamin.in'   => 'Jenis kelamin tidak valid.',
+            'nik.unique'        => 'NIK ini sudah terdaftar. Setiap anak hanya dapat mendaftar satu kali.',
+            'nik.digits'        => 'NIK harus terdiri dari 16 digit angka.',
+            'jenis_kelamin.in'  => 'Jenis kelamin tidak valid.',
         ]);
 
         // Generate unique no_pendaftaran: PPDB-YYYY-XXXXX
-        $lastId = Ppdb::max('id') ?? 0;
+        $lastId        = Ppdb::max('id') ?? 0;
         $noPendaftaran = 'PPDB-' . date('Y') . '-' . str_pad($lastId + 1, 5, '0', STR_PAD_LEFT);
 
         $input = $request->except('_token');
         $input['no_pendaftaran'] = $noPendaftaran;
-        $input['status'] = 'pending';
+        $input['status']         = 'pending';
 
         // Handle file uploads
         $fileFields = ['berkas_kk', 'berkas_akta', 'berkas_pasfoto'];
@@ -46,31 +46,29 @@ class PpdbPublikController extends Controller
 
         Ppdb::create($input);
 
-        return redirect('ppdb.form')
-            ->with('success', "Pendaftaran berhasil! No. Pendaftaran Anda: <strong>{$noPendaftaran}</strong>. Simpan nomor ini untuk mengecek status pendaftaran.");
+        \App\Core\Session::setFlash('success', "Pendaftaran berhasil! No. Pendaftaran Anda: <strong>{$noPendaftaran}</strong>. Simpan nomor ini untuk mengecek status pendaftaran.");
+        header('Location: /ppdb-online');
+        exit;
     }
 
     public function cek(Request $request)
     {
-        $no = $request->query('no');
+        $no   = $request->input('no');
         $ppdb = Ppdb::where('no_pendaftaran', $no)->first();
 
+        header('Content-Type: application/json; charset=utf-8');
+
         if (!$ppdb) {
-            return response()->json(['found' => false]);
+            echo json_encode(['found' => false]);
+            exit;
         }
 
-        $statusLabels = [
-            'pending'  => 'Menunggu Verifikasi',
-            'verified' => 'Sedang Diproses',
-            'accepted' => 'DITERIMA',
-            'rejected' => 'Tidak Diterima',
-        ];
-
-        return response()->json([
+        echo json_encode([
             'found'   => true,
             'nama'    => $ppdb->nama_lengkap,
             'status'  => $ppdb->status,
             'catatan' => $ppdb->catatan ?? 'Tidak ada catatan dari panitia.',
         ]);
+        exit;
     }
 }
