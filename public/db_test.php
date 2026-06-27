@@ -1,28 +1,40 @@
 <?php
-// db_test.php - Temporary database query diagnostic
+// db_test.php - Temporary database and storage diagnostic
 header("Content-Type: text/html");
+// Clear OPcache if enabled
+if (function_exists('opcache_reset')) {
+    opcache_reset();
+    $opcache_status = "✓ OPcache berhasil di-reset!";
+} else {
+    $opcache_status = "OPcache tidak aktif atau tidak diijinkan.";
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Database Diagnostic</title>
+    <title>Database & Storage Diagnostic</title>
     <style>
         body { font-family: sans-serif; padding: 20px; background: #f8fafc; color: #334155; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 25px; }
         th, td { border: 1px solid #cbd5e1; padding: 10px; text-align: left; }
         th { background: #e2e8f0; }
-        pre { background: #0f172a; color: #38bdf8; padding: 15px; border-radius: 8px; }
+        pre { background: #0f172a; color: #38bdf8; padding: 15px; border-radius: 8px; overflow-x: auto; }
+        .alert { padding: 10px 15px; border-radius: 6px; margin-bottom: 15px; font-weight: bold; }
+        .success { background: #dcfce7; color: #15803d; }
+        .error { background: #fee2e2; color: #b91c1c; }
     </style>
 </head>
 <body>
-    <h2>Database Diagnostic SDN Demakijo 1</h2>
+    <h2>Diagnostic Tool SDN Demakijo 1</h2>
+    
+    <div class="alert success"><?php echo $opcache_status; ?></div>
     
     <?php
     // Load .env
     $envPath = __DIR__ . '/../.env';
     if (!file_exists($envPath)) {
-        echo "<p style='color:red;'>Error: File .env tidak ditemukan di: $envPath</p>";
+        echo "<div class='alert error'>Error: File .env tidak ditemukan!</div>";
         exit;
     }
     
@@ -36,10 +48,33 @@ header("Content-Type: text/html");
         $env[$name] = $value;
     }
     
-    echo "<h3>1. Info Koneksi .env</h3>";
-    echo "Host: <b>" . ($env['DB_HOST'] ?? '127.0.0.1') . "</b><br>";
-    echo "Database: <b>" . ($env['DB_DATABASE'] ?? '') . "</b><br>";
-    echo "Username: <b>" . ($env['DB_USERNAME'] ?? '') . "</b><br>";
+    // Check storage paths
+    $storagePublicDir = __DIR__ . '/storage';
+    echo "<h3>1. Info Folder Upload/Storage</h3>";
+    echo "Path Folder: <code>" . htmlspecialchars($storagePublicDir) . "</code><br>";
+    if (is_dir($storagePublicDir)) {
+        echo "Status Folder: <b style='color:green;'>Ada (Directory)</b><br>";
+        echo "Permissions: <b>" . substr(sprintf('%o', fileperms($storagePublicDir)), -4) . "</b><br>";
+        
+        // Scan files inside uploads
+        $uploadsDir = $storagePublicDir . '/uploads';
+        if (is_dir($uploadsDir)) {
+            $files = array_diff(scandir($uploadsDir), ['.', '..']);
+            echo "Total File di <code>storage/uploads/</code>: <b>" . count($files) . "</b><br>";
+            if (count($files) > 0) {
+                echo "<ul>";
+                foreach (array_slice($files, 0, 10) as $f) {
+                    echo "<li>$f (" . filesize($uploadsDir . '/' . $f) . " bytes)</li>";
+                }
+                if (count($files) > 10) echo "<li>... dan " . (count($files) - 10) . " file lainnya</li>";
+                echo "</ul>";
+            }
+        } else {
+            echo "Status Folder 'uploads': <b style='color:red;'>Belum ada folder 'uploads' di dalam storage.</b><br>";
+        }
+    } else {
+        echo "Status Folder: <b style='color:red;'>Belum ada folder 'storage' di folder public/</b><br>";
+    }
     
     try {
         $dsn = "mysql:host=" . ($env['DB_HOST'] ?? '127.0.0.1') . ";port=" . ($env['DB_PORT'] ?? '3306') . ";dbname=" . ($env['DB_DATABASE'] ?? '') . ";charset=utf8";
@@ -48,23 +83,27 @@ header("Content-Type: text/html");
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
         ]);
         
-        echo "<p style='color:green;'>✓ Berhasil terhubung ke database!</p>";
-        
         // Query beritas
         echo "<h3>2. Data dari tabel 'beritas'</h3>";
-        $stmt = $pdo->query("SELECT id, judul, is_published, created_at FROM beritas ORDER BY id DESC");
+        $stmt = $pdo->query("SELECT id, judul, gambar, is_published, created_at FROM beritas ORDER BY id DESC");
         $beritas = $stmt->fetchAll();
         
         if (count($beritas) > 0) {
             echo "Total records: <b>" . count($beritas) . "</b>";
             echo "<table>";
-            echo "<tr><th>ID</th><th>Judul</th><th>Status Publikasi</th><th>Tanggal Dibuat</th></tr>";
+            echo "<tr><th>ID</th><th>Judul</th><th>Nama File Gambar</th><th>File Fisik Ada?</th><th>Status</th></tr>";
             foreach ($beritas as $row) {
+                $gambarPath = $row['gambar'];
+                $physicalFile = __DIR__ . '/storage/' . $gambarPath;
+                $fileExists = (!empty($gambarPath) && file_exists($physicalFile)) ? "<b style='color:green;'>YA</b>" : "<b style='color:red;'>TIDAK</b>";
+                if (empty($gambarPath)) $fileExists = "<span class='text-muted'>Kosong</span>";
+                
                 echo "<tr>";
                 echo "<td>" . $row['id'] . "</td>";
                 echo "<td>" . htmlspecialchars($row['judul']) . "</td>";
+                echo "<td><code>" . htmlspecialchars($gambarPath ?? '-') . "</code></td>";
+                echo "<td>" . $fileExists . "</td>";
                 echo "<td>" . ($row['is_published'] ? 'Publikasi' : 'Draft') . "</td>";
-                echo "<td>" . $row['created_at'] . "</td>";
                 echo "</tr>";
             }
             echo "</table>";
@@ -73,7 +112,7 @@ header("Content-Type: text/html");
         }
         
     } catch (Exception $e) {
-        echo "<p style='color:red;'>Error Koneksi: " . $e->getMessage() . "</p>";
+        echo "<div class='alert error'>Error Koneksi: " . $e->getMessage() . "</div>";
     }
     ?>
 </body>
