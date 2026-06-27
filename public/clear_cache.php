@@ -10,11 +10,13 @@ $error = false;
 // 1. Clear BladeOne Cache
 $cacheDir = __DIR__ . '/../storage/cache';
 if (is_dir($cacheDir)) {
-    $files = glob($cacheDir . '/*.php');
+    $files = glob($cacheDir . '/*.{php,bladec}', GLOB_BRACE);
     $deletedCount = 0;
     foreach ($files as $file) {
-        if (@unlink($file)) {
-            $deletedCount++;
+        if (is_file($file) && basename($file) !== '.gitkeep') {
+            if (@unlink($file)) {
+                $deletedCount++;
+            }
         }
     }
     $log[] = "✓ Berhasil menghapus <b>$deletedCount</b> file compiled view cache di <code>storage/cache/</code>.";

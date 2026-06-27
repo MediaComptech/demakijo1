@@ -43,6 +43,7 @@ if not exist ".env" (
 if exist "storage\cache" (
     echo Membersihkan Blade cache...
     del /q "storage\cache\*.php" 2>nul
+    del /q "storage\cache\*.bladec" 2>nul
     echo Cache dibersihkan.
     echo.
 )
