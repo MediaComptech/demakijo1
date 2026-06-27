@@ -68,6 +68,18 @@ if (function_exists('opcache_reset')) {
     <div class="alert success"><?php echo $opcache_status; ?></div>
     <div class="alert info"><b>Status Permission:</b> <?php echo $chmod_status; ?></div>
     
+    <div class="alert info">
+        <b>Status Git:</b> 
+        <?php
+        $gitHeadFile = __DIR__ . '/../.git/refs/heads/main';
+        if (file_exists($gitHeadFile)) {
+            echo "SHA Commit Teraktif: <code>" . trim(file_get_contents($gitHeadFile)) . "</code>";
+        } else {
+            echo "Folder .git/refs/heads/main tidak terbaca.";
+        }
+        ?>
+    </div>
+    
     <?php
     // Load .env
     $envPath = __DIR__ . '/../.env';

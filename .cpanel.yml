@@ -2,7 +2,9 @@
 deployment:
   tasks:
     - export DEPLOYPATH=/home/sdnc1967/public_html
-    - /bin/rm -rf $DEPLOYPATH/storage/cache
+    - /bin/find $DEPLOYPATH/storage/cache -name "*.bladec" -delete
+    - /bin/find $DEPLOYPATH/storage/cache -name "*.php" -not -name ".gitkeep" -delete
     - /bin/mkdir -p $DEPLOYPATH/storage/cache
     - /bin/chmod -R 755 $DEPLOYPATH/storage
-    - /bin/chmod -R 644 $DEPLOYPATH/storage/cache
+    - /bin/mkdir -p $DEPLOYPATH/public/storage/uploads
+    - /bin/chmod -R 755 $DEPLOYPATH/public/storage
