@@ -57,7 +57,7 @@ class Router
 
         $method = $_SERVER['REQUEST_METHOD'];
 
-        // Log POST request data for tracking
+        // Log POST request data for tracking & auto-clear cache for instant local testing updates
         if ($method === 'POST') {
             $postData = $_POST;
             if (isset($postData['password'])) {
@@ -74,6 +74,18 @@ class Router
                     ];
                 }, $_FILES)
             ]);
+
+            // Auto-clear BladeOne view cache on POST (create/update/delete)
+            $cacheDir = __DIR__ . '/../../storage/cache';
+            if (is_dir($cacheDir)) {
+                $files1 = glob($cacheDir . '/*.php') ?: [];
+                $files2 = glob($cacheDir . '/*.bladec') ?: [];
+                foreach (array_merge($files1, $files2) as $file) {
+                    if (is_file($file) && basename($file) !== '.gitkeep') {
+                        @unlink($file);
+                    }
+                }
+            }
         }
 
         // Cek apakah method spoofing digunakan (misal: untuk PUT/DELETE via POST)
