@@ -6,9 +6,6 @@ use App\Core\Request;
 use App\Core\Auth;
 use App\Models\Berita;
 use App\Models\KategoriBerita;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Cache;
 
 class BeritaController extends Controller
 {
@@ -42,7 +39,6 @@ class BeritaController extends Controller
         }
 
         Berita::create($input);
-        Cache::forget('berita_page_1');
         redirect('/admin/berita')->with('success', 'Berita berhasil ditambahkan');
     }
 
@@ -61,21 +57,19 @@ class BeritaController extends Controller
         if (!isset($input['is_published'])) $input['is_published'] = 0;
 
         if ($request->hasFile('gambar')) {
-            if ($model->gambar) Storage::disk('public')->delete($model->gambar);
+            if ($model->gambar) native_storage_delete($model->gambar);
             $input['gambar'] = $request->file('gambar')->store('uploads', 'public');
         }
 
         $model->update($input);
-        Cache::forget('berita_page_1');
         redirect('/admin/berita')->with('success', 'Berita berhasil diubah');
     }
 
     public function destroy($id)
     {
         $model = Berita::findOrFail($id);
-        if ($model->gambar) Storage::disk('public')->delete($model->gambar);
+        if ($model->gambar) native_storage_delete($model->gambar);
         $model->delete();
-        Cache::forget('berita_page_1');
         redirect('/admin/berita')->with('success', 'Berita berhasil dihapus');
     }
 }

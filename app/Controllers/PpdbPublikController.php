@@ -5,7 +5,6 @@ namespace App\Controllers;
 use App\Core\Request;
 use App\Core\Auth;
 use App\Models\Ppdb;
-use Illuminate\Support\Facades\Storage;
 
 class PpdbPublikController extends Controller
 {

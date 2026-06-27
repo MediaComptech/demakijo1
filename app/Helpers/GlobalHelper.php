@@ -247,6 +247,41 @@ if (!function_exists('config')) {
     }
 }
 
+if (!function_exists('public_path')) {
+    function public_path(string $path = ''): string
+    {
+        $base = rtrim(__DIR__ . '/../../public', '/\\');
+        if ($path === '') return $base;
+        return $base . DIRECTORY_SEPARATOR . ltrim($path, '/\\');
+    }
+}
+
+if (!function_exists('storage_path')) {
+    function storage_path(string $path = ''): string
+    {
+        $base = rtrim(__DIR__ . '/../../storage', '/\\');
+        if ($path === '') return $base;
+        return $base . DIRECTORY_SEPARATOR . ltrim($path, '/\\');
+    }
+}
+
+if (!function_exists('native_storage_delete')) {
+    /**
+     * Hapus file dari public/storage/
+     * Pengganti Storage::disk('public')->delete($path)
+     * @param string $path Relatif dari public/storage/, misal "uploads/abc.jpg"
+     */
+    function native_storage_delete(string $path): bool
+    {
+        if (empty($path)) return false;
+        $fullPath = public_path('storage/' . ltrim($path, '/'));
+        if (file_exists($fullPath)) {
+            return (bool) @unlink($fullPath);
+        }
+        return false;
+    }
+}
+
 if (!function_exists('unique_slug')) {
     /**
      * Generate slug unik untuk model tertentu.

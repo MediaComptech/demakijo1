@@ -160,7 +160,7 @@ class NativeUploadedFile
     {
         $ext       = $this->getClientOriginalExtension();
         $filename  = uniqid('', true) . '.' . $ext;
-        $storageDir = __DIR__ . '/../../../public/storage/' . trim($path, '/');
+        $storageDir = __DIR__ . '/../../public/storage/' . trim($path, '/');
 
         if (!is_dir($storageDir)) {
             mkdir($storageDir, 0777, true);

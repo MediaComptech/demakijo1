@@ -5,7 +5,6 @@ use App\Core\Controller;
 use App\Core\Request;
 use App\Core\Auth;
 use App\Models\Ppdb;
-use Illuminate\Support\Facades\Storage;
 
 class PpdbController extends Controller
 {
@@ -52,7 +51,7 @@ class PpdbController extends Controller
         $input = $request->except('_token', '_method');
         foreach (['berkas_kk', 'berkas_akta', 'berkas_pasfoto'] as $f) {
             if ($request->hasFile($f)) {
-                if ($model->$f) Storage::disk('public')->delete($model->$f);
+                if ($model->$f) native_storage_delete($model->$f);
                 $input[$f] = $request->file($f)->store('ppdb/' . date('Y'), 'public');
             } else {
                 unset($input[$f]);
@@ -66,11 +65,9 @@ class PpdbController extends Controller
     {
         $model = Ppdb::findOrFail($id);
         foreach (['berkas_kk', 'berkas_akta', 'berkas_pasfoto'] as $f) {
-            if ($model->$f) Storage::disk('public')->delete($model->$f);
+            if ($model->$f) native_storage_delete($model->$f);
         }
         $model->delete();
         redirect('/admin/ppdb')->with('success', 'Data pendaftar berhasil dihapus');
     }
 }
-
-

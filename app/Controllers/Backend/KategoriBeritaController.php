@@ -4,7 +4,6 @@ use App\Core\Controller;
 use App\Core\Request;
 use App\Core\Auth;
 use App\Models\KategoriBerita;
-use Illuminate\Support\Str;
 
 class KategoriBeritaController extends Controller
 {

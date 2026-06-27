@@ -5,8 +5,6 @@ use App\Core\Controller;
 use App\Core\Request;
 use App\Core\Auth;
 use App\Models\Agenda;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Cache;
 
 class AgendaController extends Controller
 {
@@ -32,7 +30,6 @@ class AgendaController extends Controller
         $input = $request->except('_token');
         $input['slug'] = unique_slug($request->judul ?? $request->nama ?? '', \App\Models\Agenda::class);
         Agenda::create($input);
-        Cache::forget('agenda_all');
         redirect('/admin/agenda')->with('success', 'Agenda berhasil ditambahkan');
     }
 
@@ -48,14 +45,12 @@ class AgendaController extends Controller
         $input = $request->except('_token', '_method');
         $input['slug'] = unique_slug($request->judul ?? $request->nama ?? '', \App\Models\Agenda::class, 'slug', $id);
         $model->update($input);
-        Cache::forget('agenda_all');
         redirect('/admin/agenda')->with('success', 'Agenda berhasil diubah');
     }
 
     public function destroy($id)
     {
         Agenda::findOrFail($id)->delete();
-        Cache::forget('agenda_all');
         redirect('/admin/agenda')->with('success', 'Agenda berhasil dihapus');
     }
 }

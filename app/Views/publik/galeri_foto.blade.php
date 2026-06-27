@@ -29,9 +29,9 @@
         <span class="album-badge"><i class="far fa-images me-1"></i>{{ $fotoCount }} Foto</span>
 
         <!-- Thumbnail album — ukuran seragam via CSS height: 220px + object-fit: cover -->
-        @if($thumbnail && $thumbnail->file_path)
+        @if($thumbnail && $thumbnail->file)
             <img
-                src="{{ \Illuminate\Support\Facades\Storage::url($thumbnail->file_path) }}"
+                src="{{ asset('storage/' . $thumbnail->file) }}"
                 class="album-thumb"
                 alt="{{ $item->nama }}"
                 loading="lazy"
@@ -73,7 +73,7 @@
                         @foreach($item->galeri as $foto)
                         <div style="border-radius:10px; overflow:hidden; height:160px; background:#ddd;">
                             <img
-                                src="{{ \Illuminate\Support\Facades\Storage::url($foto->file_path) }}"
+                                src="{{ asset('storage/' . $foto->file) }}"
                                 alt="{{ $foto->keterangan ?? $item->nama }}"
                                 style="width:100%; height:160px; object-fit:cover; display:block; cursor:pointer;"
                                 loading="lazy"

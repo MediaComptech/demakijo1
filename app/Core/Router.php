@@ -88,6 +88,33 @@ class Router
             }
         }
 
+        // Deteksi Ctrl + F5 (Cache-Control: no-cache atau Pragma: no-cache)
+        $isCtrlF5 = (isset($_SERVER['HTTP_CACHE_CONTROL']) && $_SERVER['HTTP_CACHE_CONTROL'] === 'no-cache') || 
+                    (isset($_SERVER['HTTP_PRAGMA']) && $_SERVER['HTTP_PRAGMA'] === 'no-cache');
+
+        // Log GET requests (hanya untuk rute admin/dashboard agar file log tetap ringkas)
+        if ($method === 'GET' && (str_starts_with($uri, '/admin') || str_starts_with($uri, '/dashboard') || $uri === '/admin')) {
+            self::logAction($isCtrlF5 ? 'GET_CTRL_F5' : 'GET_NORMAL', [
+                'cache_control' => $_SERVER['HTTP_CACHE_CONTROL'] ?? 'none',
+                'pragma' => $_SERVER['HTTP_PRAGMA'] ?? 'none',
+                'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'unknown'
+            ]);
+
+            // Jika user menekan Ctrl + F5 di browser, kita bantu hapus server-side BladeOne cache
+            if ($isCtrlF5) {
+                $cacheDir = __DIR__ . '/../../storage/cache';
+                if (is_dir($cacheDir)) {
+                    $files1 = glob($cacheDir . '/*.php') ?: [];
+                    $files2 = glob($cacheDir . '/*.bladec') ?: [];
+                    foreach (array_merge($files1, $files2) as $file) {
+                        if (is_file($file) && basename($file) !== '.gitkeep') {
+                            @unlink($file);
+                        }
+                    }
+                }
+            }
+        }
+
         // Cek apakah method spoofing digunakan (misal: untuk PUT/DELETE via POST)
         if ($method === 'POST' && isset($_POST['_method'])) {
             $spoofed = strtoupper($_POST['_method']);

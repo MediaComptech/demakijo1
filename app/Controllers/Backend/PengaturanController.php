@@ -5,7 +5,6 @@ use App\Core\Controller;
 use App\Core\Request;
 use App\Core\Auth;
 use App\Models\SettingWebsite;
-use Illuminate\Support\Facades\Storage;
 
 class PengaturanController extends Controller
 {
@@ -75,7 +74,7 @@ class PengaturanController extends Controller
                 if ($val !== null) $input[$f] = $val === '' ? null : $val;
             }
             if ($request->hasFile('foto_kepsek')) {
-                if ($data->foto_kepsek) Storage::disk('public')->delete($data->foto_kepsek);
+                if ($data->foto_kepsek) native_storage_delete($data->foto_kepsek);
                 $input['foto_kepsek'] = $request->file('foto_kepsek')->store('uploads', 'public');
             }
         }
@@ -83,7 +82,7 @@ class PengaturanController extends Controller
         // === Handle Logo ===
         if ($section === 'logo') {
             if ($request->hasFile('logo')) {
-                if ($data->logo) Storage::disk('public')->delete($data->logo);
+                if ($data->logo) native_storage_delete($data->logo);
                 $input['logo'] = $request->file('logo')->store('logo', 'public');
             }
         }
@@ -93,10 +92,10 @@ class PengaturanController extends Controller
             for ($i = 1; $i <= 5; $i++) {
                 $field = 'slider_' . $i;
                 if ($request->hasFile($field)) {
-                    if ($data->$field) Storage::disk('public')->delete($data->$field);
+                    if ($data->$field) native_storage_delete($data->$field);
                     $input[$field] = $request->file($field)->store('slider', 'public');
                 } elseif ($request->input('delete_' . $field)) {
-                    if ($data->$field) Storage::disk('public')->delete($data->$field);
+                    if ($data->$field) native_storage_delete($data->$field);
                     $input[$field] = null;
                 }
             }

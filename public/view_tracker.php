@@ -81,6 +81,12 @@ if (isset($_POST['action']) && $_POST['action'] === 'clear') {
         
         .type-DISPATCH_CONTROLLER { border-left-color: #a855f7; }
         .badge-DISPATCH_CONTROLLER { background: #f3e8ff; color: #6b21a8; }
+
+        .type-GET_NORMAL { border-left-color: #64748b; }
+        .badge-GET_NORMAL { background: #e2e8f0; color: #475569; }
+
+        .type-GET_CTRL_F5 { border-left-color: #f59e0b; }
+        .badge-GET_CTRL_F5 { background: #fef3c7; color: #b45309; }
         
         pre { background: #0f172a; color: #38bdf8; padding: 12px; border-radius: 6px; font-family: monospace; font-size: 13px; overflow-x: auto; margin-top: 8px; margin-bottom: 0; }
         .text-muted { color: #64748b; }
@@ -147,6 +153,16 @@ if (isset($_POST['action']) && $_POST['action'] === 'clear') {
                                 <b>Route Terhubung ke Controller:</b>
                                 <div>Controller Class: <code><?php echo htmlspecialchars($log['data']['controller'] ?? ''); ?></code></div>
                                 <div>Method/Action: <code><?php echo htmlspecialchars($log['data']['method'] ?? ''); ?></code></div>
+                            </div>
+
+                        <?php elseif ($type === 'GET_NORMAL' || $type === 'GET_CTRL_F5'): ?>
+                            <div style="margin-top: 5px;">
+                                <b>Akses Halaman GET (<?php echo ($type === 'GET_CTRL_F5') ? '⚠️ Bypass Cache / Ctrl + F5' : 'Normal'; ?>):</b>
+                                <div style="font-size:12px; margin-top:5px; line-height: 1.6;">
+                                    <div>Cache-Control Header: <code><?php echo htmlspecialchars($log['data']['cache_control'] ?? 'none'); ?></code></div>
+                                    <div>Pragma Header: <code><?php echo htmlspecialchars($log['data']['pragma'] ?? 'none'); ?></code></div>
+                                    <div class="text-muted" style="margin-top:3px;">User Agent: <?php echo htmlspecialchars($log['data']['user_agent'] ?? '-'); ?></div>
+                                </div>
                             </div>
                         
                         <?php elseif ($type === 'DB_ERROR'): ?>

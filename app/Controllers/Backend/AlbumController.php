@@ -5,8 +5,6 @@ use App\Core\Controller;
 use App\Core\Request;
 use App\Core\Auth;
 use App\Models\Album;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
 
 class AlbumController extends Controller
 {
@@ -52,7 +50,7 @@ class AlbumController extends Controller
         $titleField = $request->judul ?? $request->nama ?? '';
         $data['slug'] = unique_slug($titleField, \App\Models\Album::class, 'slug', $id);
         if ($request->hasFile('cover')) {
-            if ($model->cover) Storage::disk('public')->delete($model->cover);
+            if ($model->cover) native_storage_delete($model->cover);
             $data['cover'] = $request->file('cover')->store('uploads', 'public');
         }
         $model->update($data);
@@ -62,7 +60,7 @@ class AlbumController extends Controller
     public function destroy($id)
     {
         $model = Album::findOrFail($id);
-        if ($model->cover) Storage::disk('public')->delete($model->cover);
+        if ($model->cover) native_storage_delete($model->cover);
         $model->delete();
         redirect('/admin/album')->with('success', 'Album berhasil dihapus');
     }

@@ -5,9 +5,6 @@ use App\Core\Controller;
 use App\Core\Request;
 use App\Core\Auth;
 use App\Models\Guru;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Cache;
 
 class GuruController extends Controller
 {
@@ -37,7 +34,6 @@ class GuruController extends Controller
             $input['foto'] = $request->file('foto')->store('uploads', 'public');
         }
         Guru::create($input);
-        Cache::forget('guru_all');
         redirect('/admin/guru')->with('success', 'Data Guru berhasil ditambahkan');
     }
 
@@ -54,20 +50,18 @@ class GuruController extends Controller
         // Konversi NIP kosong ke null agar tidak melanggar UNIQUE constraint
         if (isset($input['nip']) && $input['nip'] === '') $input['nip'] = null;
         if ($request->hasFile('foto')) {
-            if ($model->foto) Storage::disk('public')->delete($model->foto);
+            if ($model->foto) native_storage_delete($model->foto);
             $input['foto'] = $request->file('foto')->store('uploads', 'public');
         }
         $model->update($input);
-        Cache::forget('guru_all');
         redirect('/admin/guru')->with('success', 'Data Guru berhasil diubah');
     }
 
     public function destroy($id)
     {
         $model = Guru::findOrFail($id);
-        if ($model->foto) Storage::disk('public')->delete($model->foto);
+        if ($model->foto) native_storage_delete($model->foto);
         $model->delete();
-        Cache::forget('guru_all');
         redirect('/admin/guru')->with('success', 'Data Guru berhasil dihapus');
     }
 }

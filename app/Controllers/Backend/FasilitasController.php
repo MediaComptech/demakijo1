@@ -1,12 +1,10 @@
 <?php
 namespace App\Controllers\Backend;
+
 use App\Core\Controller;
 use App\Core\Request;
 use App\Core\Auth;
 use App\Models\Fasilitas;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Cache;
 
 class FasilitasController extends Controller
 {
@@ -15,41 +13,53 @@ class FasilitasController extends Controller
         parent::__construct();
         if (!Auth::check()) { redirect('/login'); }
     }
-    public function index() {
-        $data = \App\Models\Fasilitas::latest()->get();
-        return view("backend." . strtolower(preg_replace("/(?<!^)[A-Z]/", "_$0", "Fasilitas")) . ".index", compact("data"));
+
+    public function index()
+    {
+        $data = Fasilitas::latest()->get();
+        return view('backend.fasilitas.index', compact('data'));
     }
-    public function create() {
-        return view("backend." . strtolower(preg_replace("/(?<!^)[A-Z]/", "_$0", "Fasilitas")) . ".create");
+
+    public function create()
+    {
+        return view('backend.fasilitas.create');
     }
-    public function store(Request $request) {
-        $input = $request->except("_token");
-        $input["slug"] = unique_slug($request->nama ?? $request->judul ?? '', \App\Models\Fasilitas::class);
-        if ($request->hasFile("foto")) { $input["foto"] = $request->file("foto")->store("uploads", "public"); }
-        \App\Models\Fasilitas::create($input);
-        Cache::forget("fasilitas_all");
-        redirect('/admin/fasilitas')->with("success", "Data berhasil ditambahkan");
+
+    public function store(Request $request)
+    {
+        $input = $request->except('_token');
+        $input['slug'] = unique_slug($request->nama ?? $request->judul ?? '', \App\Models\Fasilitas::class);
+        if ($request->hasFile('foto')) {
+            $input['foto'] = $request->file('foto')->store('uploads', 'public');
+        }
+        Fasilitas::create($input);
+        redirect('/admin/fasilitas')->with('success', 'Data berhasil ditambahkan');
     }
-    public function edit($id) {
-        $data = \App\Models\Fasilitas::findOrFail($id);
-        return view("backend." . strtolower(preg_replace("/(?<!^)[A-Z]/", "_$0", "Fasilitas")) . ".edit", compact("data"));
+
+    public function edit($id)
+    {
+        $data = Fasilitas::findOrFail($id);
+        return view('backend.fasilitas.edit', compact('data'));
     }
-    public function update(Request $request, $id) {
-        $model = \App\Models\Fasilitas::findOrFail($id);
-        $input = $request->except("_token", "_method");
-        $input["slug"] = unique_slug($request->nama ?? $request->judul ?? '', \App\Models\Fasilitas::class, 'slug', $id);
-        if ($request->hasFile("foto")) { if ($model->foto) Storage::disk("public")->delete($model->foto); $input["foto"] = $request->file("foto")->store("uploads", "public"); }
+
+    public function update(Request $request, $id)
+    {
+        $model = Fasilitas::findOrFail($id);
+        $input = $request->except('_token', '_method');
+        $input['slug'] = unique_slug($request->nama ?? $request->judul ?? '', \App\Models\Fasilitas::class, 'slug', $id);
+        if ($request->hasFile('foto')) {
+            if ($model->foto) native_storage_delete($model->foto);
+            $input['foto'] = $request->file('foto')->store('uploads', 'public');
+        }
         $model->update($input);
-        Cache::forget("fasilitas_all");
-        redirect('/admin/fasilitas')->with("success", "Data berhasil diubah");
+        redirect('/admin/fasilitas')->with('success', 'Data berhasil diubah');
     }
-    public function destroy($id) {
-        $model = \App\Models\Fasilitas::findOrFail($id);
-        if ($model->foto) Storage::disk("public")->delete($model->foto);
+
+    public function destroy($id)
+    {
+        $model = Fasilitas::findOrFail($id);
+        if ($model->foto) native_storage_delete($model->foto);
         $model->delete();
-        Cache::forget("fasilitas_all");
-        redirect('/admin/fasilitas')->with("success", "Data berhasil dihapus");
+        redirect('/admin/fasilitas')->with('success', 'Data berhasil dihapus');
     }
 }
-
-

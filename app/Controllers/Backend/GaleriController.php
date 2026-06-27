@@ -6,8 +6,6 @@ use App\Core\Request;
 use App\Core\Auth;
 use App\Models\Galeri;
 use App\Models\Album;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
 
 class GaleriController extends Controller
 {
@@ -42,7 +40,7 @@ class GaleriController extends Controller
     public function destroy($id)
     {
         $model = Galeri::findOrFail($id);
-        if ($model->file) Storage::disk('public')->delete($model->file);
+        if ($model->file) native_storage_delete($model->file);
         $model->delete();
         redirect('/admin/galeri')->with('success', 'Foto berhasil dihapus');
     }
