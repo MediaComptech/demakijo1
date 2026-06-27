@@ -57,6 +57,25 @@ class Router
 
         $method = $_SERVER['REQUEST_METHOD'];
 
+        // Log POST request data for tracking
+        if ($method === 'POST') {
+            $postData = $_POST;
+            if (isset($postData['password'])) {
+                $postData['password'] = '********';
+            }
+            self::logAction('REQUEST_POST', [
+                'post' => $postData,
+                'files' => array_map(function($file) {
+                    return [
+                        'name' => $file['name'] ?? '',
+                        'type' => $file['type'] ?? '',
+                        'size' => $file['size'] ?? 0,
+                        'error' => $file['error'] ?? 0
+                    ];
+                }, $_FILES)
+            ]);
+        }
+
         // Cek apakah method spoofing digunakan (misal: untuk PUT/DELETE via POST)
         if ($method === 'POST' && isset($_POST['_method'])) {
             $spoofed = strtoupper($_POST['_method']);
@@ -78,6 +97,7 @@ class Router
                     // Action bisa berupa fungsi anonymous (closure) atau string Controller@method
                     if (is_callable($action)) {
                         http_response_code(200);
+                        self::logAction('DISPATCH_CLOSURE', ['uri' => $routeUri]);
                         call_user_func_array($action, $matches);
                         return;
                     }
@@ -107,10 +127,24 @@ class Router
                                 }
                                 
                                 http_response_code(200);
+                                self::logAction('DISPATCH_CONTROLLER', [
+                                    'controller' => $controllerClass,
+                                    'method' => $function,
+                                    'args' => $finalArgs
+                                ]);
                                 try {
                                     call_user_func_array([$instance, $function], $finalArgs);
+                                    self::logAction('SUCCESS', [
+                                        'controller' => $controllerClass,
+                                        'method' => $function
+                                    ]);
                                 } catch (\Illuminate\Database\QueryException $e) {
                                     error_log('[DB ERROR] ' . $e->getMessage());
+                                    self::logAction('DB_ERROR', [
+                                        'message' => $e->getMessage(),
+                                        'sql' => $e->getSql(),
+                                        'bindings' => $e->getBindings()
+                                    ]);
                                     $msg = 'Terjadi kesalahan database.';
                                     $errMsg = $e->getMessage();
                                     if (str_contains($errMsg, 'Duplicate entry') || str_contains($errMsg, '1062')) {
@@ -127,6 +161,13 @@ class Router
                                     if (!headers_sent()) { header('Location: ' . $referer); exit; }
                                 } catch (\Throwable $e) {
                                     error_log('[APP ERROR] ' . get_class($e) . ': ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
+                                    self::logAction('APP_ERROR', [
+                                        'class' => get_class($e),
+                                        'message' => $e->getMessage(),
+                                        'file' => $e->getFile(),
+                                        'line' => $e->getLine(),
+                                        'trace' => substr($e->getTraceAsString(), 0, 1000)
+                                    ]);
                                     \App\Core\Session::setFlash('error', 'Terjadi kesalahan sistem. Silakan coba lagi.');
                                     $referer = $_SERVER['HTTP_REFERER'] ?? '/dashboard';
                                     if (!headers_sent()) { header('Location: ' . $referer); exit; }
@@ -156,5 +197,35 @@ class Router
             echo "<h1>{$code} - Terjadi Kesalahan</h1>";
         }
         exit;
+    }
+
+    /**
+     * Helper untuk mencatat log aktivitas aksess form ke file
+     */
+    private static function logAction($type, $data)
+    {
+        $logFile = __DIR__ . '/../../storage/action_tracker.log';
+        $logDir = dirname($logFile);
+        if (!is_dir($logDir)) {
+            @mkdir($logDir, 0755, true);
+        }
+        
+        $timestamp = date('Y-m-d H:i:s');
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+        $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+        $uri = $_SERVER['REQUEST_URI'] ?? '/';
+        $userId = $_SESSION['user_id'] ?? 'Guest';
+        
+        $logEntry = [
+            'timestamp' => $timestamp,
+            'ip' => $ip,
+            'method' => $method,
+            'uri' => $uri,
+            'user_id' => $userId,
+            'type' => $type,
+            'data' => $data
+        ];
+        
+        @file_put_contents($logFile, json_encode($logEntry, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n", FILE_APPEND);
     }
 }
