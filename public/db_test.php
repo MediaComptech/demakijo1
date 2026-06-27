@@ -1,6 +1,42 @@
 <?php
 // db_test.php - Temporary database and storage diagnostic
 header("Content-Type: text/html");
+
+// Attempt to fix public/storage permissions
+$storagePublicDir = __DIR__ . '/storage';
+$chmod_status = "";
+
+if (is_dir($storagePublicDir)) {
+    $currentPerms = fileperms($storagePublicDir);
+    if (($currentPerms & 0777) !== 0755) {
+        if (@chmod($storagePublicDir, 0755)) {
+            $chmod_status = "<span style='color:green;'>✓ Berhasil mengubah permission public/storage menjadi 0755.</span>";
+        } else {
+            $chmod_status = "<span style='color:red;'>❌ Gagal mengubah permission public/storage menjadi 0755 (current: " . sprintf('%o', $currentPerms & 0777) . ").</span>";
+        }
+    } else {
+        $chmod_status = "Folder public/storage sudah memiliki permission 0755.";
+    }
+    
+    // Check and fix uploads folder permissions if it exists
+    $uploadsDir = $storagePublicDir . '/uploads';
+    if (is_dir($uploadsDir)) {
+        $uploadsPerms = fileperms($uploadsDir);
+        if (($uploadsPerms & 0777) !== 0755) {
+            if (@chmod($uploadsDir, 0755)) {
+                $chmod_status .= " <span style='color:green;'>✓ Berhasil mengubah permission public/storage/uploads menjadi 0755.</span>";
+            }
+        }
+    }
+} else {
+    $chmod_status = "Folder public/storage tidak ditemukan, mencoba membuat folder dengan permission 0755...";
+    if (@mkdir($storagePublicDir, 0755, true)) {
+        $chmod_status .= " <span style='color:green;'>✓ Folder public/storage berhasil dibuat.</span>";
+    } else {
+        $chmod_status .= " <span style='color:red;'>❌ Gagal membuat folder public/storage.</span>";
+    }
+}
+
 // Clear OPcache if enabled
 if (function_exists('opcache_reset')) {
     opcache_reset();
@@ -23,12 +59,14 @@ if (function_exists('opcache_reset')) {
         .alert { padding: 10px 15px; border-radius: 6px; margin-bottom: 15px; font-weight: bold; }
         .success { background: #dcfce7; color: #15803d; }
         .error { background: #fee2e2; color: #b91c1c; }
+        .info { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
     </style>
 </head>
 <body>
     <h2>Diagnostic Tool SDN Demakijo 1</h2>
     
     <div class="alert success"><?php echo $opcache_status; ?></div>
+    <div class="alert info"><b>Status Permission:</b> <?php echo $chmod_status; ?></div>
     
     <?php
     // Load .env
@@ -49,28 +87,36 @@ if (function_exists('opcache_reset')) {
     }
     
     // Check storage paths
-    $storagePublicDir = __DIR__ . '/storage';
     echo "<h3>1. Info Folder Upload/Storage</h3>";
     echo "Path Folder: <code>" . htmlspecialchars($storagePublicDir) . "</code><br>";
     if (is_dir($storagePublicDir)) {
         echo "Status Folder: <b style='color:green;'>Ada (Directory)</b><br>";
-        echo "Permissions: <b>" . substr(sprintf('%o', fileperms($storagePublicDir)), -4) . "</b><br>";
+        echo "Permissions Terkini: <b>" . substr(sprintf('%o', fileperms($storagePublicDir)), -4) . "</b><br>";
         
         // Scan files inside uploads
         $uploadsDir = $storagePublicDir . '/uploads';
         if (is_dir($uploadsDir)) {
+            echo "Status Folder 'uploads': <b style='color:green;'>Ada (Directory)</b><br>";
+            echo "Permissions 'uploads' Terkini: <b>" . substr(sprintf('%o', fileperms($uploadsDir)), -4) . "</b><br>";
+            
             $files = array_diff(scandir($uploadsDir), ['.', '..']);
             echo "Total File di <code>storage/uploads/</code>: <b>" . count($files) . "</b><br>";
             if (count($files) > 0) {
                 echo "<ul>";
-                foreach (array_slice($files, 0, 10) as $f) {
+                foreach (array_slice($files, 0, 15) as $f) {
                     echo "<li>$f (" . filesize($uploadsDir . '/' . $f) . " bytes)</li>";
                 }
-                if (count($files) > 10) echo "<li>... dan " . (count($files) - 10) . " file lainnya</li>";
+                if (count($files) > 15) echo "<li>... dan " . (count($files) - 15) . " file lainnya</li>";
                 echo "</ul>";
             }
         } else {
             echo "Status Folder 'uploads': <b style='color:red;'>Belum ada folder 'uploads' di dalam storage.</b><br>";
+            // Attempt to create uploads
+            if (@mkdir($uploadsDir, 0755, true)) {
+                echo "<span style='color:green;'>✓ Berhasil membuat folder 'uploads' dengan permission 0755. Silakan coba upload ulang gambar.</span><br>";
+            } else {
+                echo "<span style='color:red;'>❌ Gagal membuat folder 'uploads'.</span><br>";
+            }
         }
     } else {
         echo "Status Folder: <b style='color:red;'>Belum ada folder 'storage' di folder public/</b><br>";

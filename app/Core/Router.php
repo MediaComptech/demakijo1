@@ -44,6 +44,17 @@ class Router
         $uri = rtrim($uri, '/');
         if (empty($uri)) $uri = '/';
 
+        // Cegah caching (browser & LiteSpeed Cache) untuk semua rute admin/dashboard
+        if (str_starts_with($uri, '/admin') || str_starts_with($uri, '/dashboard') || $uri === '/admin') {
+            if (!headers_sent()) {
+                header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+                header("Cache-Control: post-check=0, pre-check=0", false);
+                header("Pragma: no-cache");
+                header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+                header("X-LiteSpeed-Cache-Control: no-cache");
+            }
+        }
+
         $method = $_SERVER['REQUEST_METHOD'];
 
         // Cek apakah method spoofing digunakan (misal: untuk PUT/DELETE via POST)
