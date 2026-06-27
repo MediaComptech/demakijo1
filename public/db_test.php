@@ -86,8 +86,27 @@ if (function_exists('opcache_reset')) {
         $env[$name] = $value;
     }
     
+    // Check storage cache folder
+    $cacheDir = __DIR__ . '/../storage/cache';
+    echo "<h3>1. Info Folder storage/cache (Blade View Cache)</h3>";
+    echo "Path Folder: <code>" . htmlspecialchars($cacheDir) . "</code><br>";
+    if (is_dir($cacheDir)) {
+        $cacheFiles = array_diff(scandir($cacheDir), ['.', '..']);
+        echo "Total file di <code>storage/cache/</code>: <b>" . count($cacheFiles) . "</b><br>";
+        if (count($cacheFiles) > 0) {
+            echo "<ul>";
+            foreach (array_slice($cacheFiles, 0, 20) as $cf) {
+                echo "<li>$cf</li>";
+            }
+            if (count($cacheFiles) > 20) echo "<li>... dan lainnya</li>";
+            echo "</ul>";
+        }
+    } else {
+        echo "Status Folder: <b style='color:red;'>Folder storage/cache tidak ditemukan!</b><br>";
+    }
+
     // Check storage paths
-    echo "<h3>1. Info Folder Upload/Storage</h3>";
+    echo "<h3>2. Info Folder Upload/Storage</h3>";
     echo "Path Folder: <code>" . htmlspecialchars($storagePublicDir) . "</code><br>";
     if (is_dir($storagePublicDir)) {
         echo "Status Folder: <b style='color:green;'>Ada (Directory)</b><br>";
@@ -111,12 +130,6 @@ if (function_exists('opcache_reset')) {
             }
         } else {
             echo "Status Folder 'uploads': <b style='color:red;'>Belum ada folder 'uploads' di dalam storage.</b><br>";
-            // Attempt to create uploads
-            if (@mkdir($uploadsDir, 0755, true)) {
-                echo "<span style='color:green;'>✓ Berhasil membuat folder 'uploads' dengan permission 0755. Silakan coba upload ulang gambar.</span><br>";
-            } else {
-                echo "<span style='color:red;'>❌ Gagal membuat folder 'uploads'.</span><br>";
-            }
         }
     } else {
         echo "Status Folder: <b style='color:red;'>Belum ada folder 'storage' di folder public/</b><br>";
@@ -130,7 +143,7 @@ if (function_exists('opcache_reset')) {
         ]);
         
         // Query beritas
-        echo "<h3>2. Data dari tabel 'beritas'</h3>";
+        echo "<h3>3. Data dari tabel 'beritas'</h3>";
         $stmt = $pdo->query("SELECT id, judul, gambar, is_published, created_at FROM beritas ORDER BY id DESC");
         $beritas = $stmt->fetchAll();
         
