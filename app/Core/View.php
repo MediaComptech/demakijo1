@@ -99,6 +99,12 @@ class View
         $mode = ($_ENV['APP_ENV'] ?? 'local') === 'production' ? BladeOne::MODE_FAST : BladeOne::MODE_DEBUG;
 
         self::$blade = new BladeOne($viewsPath, $cachePath, $mode);
+        
+        // Daftarkan alias class Illuminate\Support\Str agar bisa digunakan langsung di template Blade
+        // sebagai Str::limit(), Str::slug(), dll.
+        if (!class_exists('Str')) {
+            class_alias(\Illuminate\Support\Str::class, 'Str');
+        }
     }
 
     /**

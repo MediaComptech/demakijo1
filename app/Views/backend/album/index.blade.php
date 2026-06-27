@@ -39,11 +39,11 @@
                         <td class="fw-semibold">{{ $item->nama ?? '-' }}</td>
                         <td><span class="text-muted small">{{ Str::limit($item->deskripsi ?? '-', 60) }}</span></td>
                         <td class="text-center">
-                            <a href="{{ route('admin.album.edit', $item->id) }}"
+                            <a href="{{ url('/admin/album/' . $item->id . '/edit') }}"
                                class="btn btn-warning btn-sm" title="Edit">
                                 <i class="fas fa-edit"></i>
                             </a>
-                            <form action="{{ url('admin.album.destroy', $item->id) }}" method="POST"
+                            <form action="{{ url('/admin/album/' . $item->id . '/delete') }}" method="POST"
                                   class="d-inline form-delete-confirm" data-label="album '{{ addslashes($item->nama ?? '') }}'">
                                 {!! csrf_field() !!} <input type="hidden" name="_method" value="DELETE">
                                 <button class="btn btn-danger btn-sm" title="Hapus"><i class="fas fa-trash"></i></button>

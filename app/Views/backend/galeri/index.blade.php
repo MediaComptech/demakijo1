@@ -41,7 +41,7 @@
                         <span class="badge bg-dark">{{ $item->album->nama ?? '-' }}</span>
                     </td>
                     <td class="text-center">
-                        <form action="{{ url('admin.galeri.destroy', $item->id) }}" method="POST"
+                        <form action="{{ url('/admin/galeri/' . $item->id . '/delete') }}" method="POST"
                               class="d-inline form-delete-confirm" data-label="foto '{{ addslashes($item->judul ?? '') }}'">
                             {!! csrf_field() !!} <input type="hidden" name="_method" value="DELETE">
                             <button class="btn btn-danger btn-sm" title="Hapus"><i class="fas fa-trash"></i></button>
