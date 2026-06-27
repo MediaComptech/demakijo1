@@ -6,7 +6,6 @@ use App\Core\Controller;
 use App\Core\Request;
 use App\Core\Auth;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 
 class ProfileController extends Controller
 {
@@ -26,9 +25,13 @@ class ProfileController extends Controller
     {
         $user  = Auth::user();
         $input = $request->except('_token', '_method', 'password');
-        if ($request->filled('password')) {
-            $input['password'] = Hash::make($request->password);
+        
+        // Ambil password dari $_POST langsung untuk menghindari auto-sanitize htmlspecialchars
+        $rawPassword = $_POST['password'] ?? '';
+        if ($rawPassword !== '') {
+            $input['password'] = password_hash($rawPassword, PASSWORD_BCRYPT);
         }
+        
         User::find($user->id)->update($input);
         redirect('/profile/edit')->with('success', 'Profil berhasil diperbarui!');
     }
