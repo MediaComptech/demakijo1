@@ -40,14 +40,16 @@ class App
      */
     private static function loadDotenv()
     {
-        // Pastikan path ke .env sesuai (satu tingkat di atas folder app)
-        $dotenv = Dotenv::createImmutable(__DIR__ . '/../../');
+        $basePath = __DIR__ . '/../../';
+        // Gunakan .env.local jika ada (untuk testing offline/localhost), jika tidak ada gunakan .env bawaan
+        $fileName = file_exists($basePath . '.env.local') ? '.env.local' : '.env';
+        
+        $dotenv = Dotenv::createImmutable($basePath, $fileName);
         
         try {
             $dotenv->load();
         } catch (\Exception $e) {
-            // Jika file .env tidak ada, abaikan atau tampilkan pesan error
-            die("File .env tidak ditemukan. Silakan copy .env.example menjadi .env");
+            die("File {$fileName} tidak ditemukan. Silakan buat file konseptual .env");
         }
     }
 
