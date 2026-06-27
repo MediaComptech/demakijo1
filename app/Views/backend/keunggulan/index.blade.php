@@ -2,17 +2,11 @@
 @section('title', 'Kenapa Memilih Kami')
 @section('content')
 
-@if(session('success'))
-<div class="alert alert-success alert-dismissible fade show">
-    <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-</div>
-@endif
-
 <div class="card shadow-sm border-0">
-    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-        <h6 class="mb-0"><i class="fas fa-star me-2"></i>Data Keunggulan Sekolah</h6>
-        <a href="{{ url('admin.keunggulan.create') }}" class="btn btn-warning btn-sm fw-bold">
+    <div class="card-header d-flex justify-content-between align-items-center py-3"
+         style="background:linear-gradient(135deg,#7c2d12,#f97316);border-radius:.5rem .5rem 0 0;">
+        <h6 class="mb-0 text-white fw-bold"><i class="fas fa-star me-2"></i>Data Keunggulan Sekolah</h6>
+        <a href="{{ url('/admin/keunggulan/create') }}" class="btn btn-warning btn-sm fw-bold">
             <i class="fas fa-plus me-1"></i>Tambah Item
         </a>
     </div>
@@ -50,8 +44,8 @@
                         <a href="{{ route('admin.keunggulan.edit', $item) }}" class="btn btn-sm btn-warning">
                             <i class="fas fa-edit"></i>
                         </a>
-                        <form action="{{ route('admin.keunggulan.destroy', $item) }}" method="POST" class="d-inline"
-                              onsubmit="return confirm('Hapus item ini?')">
+                        <form action="{{ route('admin.keunggulan.destroy', $item) }}" method="POST" class="d-inline form-delete-confirm"
+                              data-label="keunggulan '{{ addslashes($item->judul ?? '') }}'">
                             {!! csrf_field() !!} <input type="hidden" name="_method" value="DELETE">
                             <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
                         </form>

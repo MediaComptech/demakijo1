@@ -32,40 +32,81 @@ class PengaturanController extends Controller
 
     public function store(Request $request)
     {
-        $data  = SettingWebsite::first();
-        $input = $request->except('_token');
+        $data    = SettingWebsite::first();
+        $section = $request->input('section', 'identitas');
 
-        // Handle Logo
-        if ($request->hasFile('logo')) {
-            if ($data->logo) Storage::disk('public')->delete($data->logo);
-            $input['logo'] = $request->file('logo')->store('logo', 'public');
-        } else {
-            unset($input['logo']);
-        }
+        // Definisi field per segmen — hanya field segmen ini yang akan diupdate
+        $sectionFields = [
+            'identitas'  => ['nama_sekolah', 'email', 'telepon', 'whatsapp', 'alamat', 'google_maps'],
+            'kepsek'     => ['nama_kepsek', 'nip_kepsek', 'sambutan_kepsek_singkat'],
+            'statistik'  => ['jumlah_siswa', 'jumlah_guru', 'jumlah_alumni', 'akreditasi'],
+            'slider'     => ['slider_1', 'slider_2', 'slider_3', 'slider_4', 'slider_5'],
+            'visi_misi'  => ['visi', 'misi', 'sejarah', 'sambutan_kepsek'],
+            'sosmed'     => ['facebook', 'instagram', 'youtube', 'youtube_embed'],
+            'logo'       => ['logo'],
+        ];
 
-        // Handle Foto Kepala Sekolah
-        if ($request->hasFile('foto_kepsek')) {
-            if ($data->foto_kepsek) Storage::disk('public')->delete($data->foto_kepsek);
-            $input['foto_kepsek'] = $request->file('foto_kepsek')->store('uploads', 'public');
-        } else {
-            unset($input['foto_kepsek']);
-        }
+        $sectionLabels = [
+            'identitas' => 'Identitas Sekolah',
+            'kepsek'    => 'Kepala Sekolah',
+            'statistik' => 'Statistik Sekolah',
+            'slider'    => 'Image Slider',
+            'visi_misi' => 'Visi, Misi & Sejarah',
+            'sosmed'    => 'Media Sosial',
+            'logo'      => 'Logo Sekolah',
+        ];
 
-        // Handle Slider Images (1–5)
-        for ($i = 1; $i <= 5; $i++) {
-            $field = 'slider_' . $i;
-            if ($request->hasFile($field)) {
-                if ($data->$field) Storage::disk('public')->delete($data->$field);
-                $input[$field] = $request->file($field)->store('slider', 'public');
-            } elseif ($request->has('delete_' . $field)) {
-                if ($data->$field) Storage::disk('public')->delete($data->$field);
-                $input[$field] = null;
-            } else {
-                unset($input[$field]);
+        // Ambil hanya field yang termasuk segmen ini dari POST
+        $allowedFields = $sectionFields[$section] ?? [];
+        $input = [];
+        foreach ($allowedFields as $field) {
+            if ($section !== 'slider' && $section !== 'kepsek' && $section !== 'logo') {
+                $val = $request->input($field);
+                if ($val !== null) {
+                    $input[$field] = $val === '' ? null : $val;
+                }
             }
         }
 
-        $data->update($input);
-        redirect('/admin/pengaturan')->with('success', 'Pengaturan berhasil disimpan!');
+        // === Handle Foto Kepala Sekolah ===
+        if ($section === 'kepsek') {
+            foreach (['nama_kepsek', 'nip_kepsek', 'sambutan_kepsek_singkat'] as $f) {
+                $val = $request->input($f);
+                if ($val !== null) $input[$f] = $val === '' ? null : $val;
+            }
+            if ($request->hasFile('foto_kepsek')) {
+                if ($data->foto_kepsek) Storage::disk('public')->delete($data->foto_kepsek);
+                $input['foto_kepsek'] = $request->file('foto_kepsek')->store('uploads', 'public');
+            }
+        }
+
+        // === Handle Logo ===
+        if ($section === 'logo') {
+            if ($request->hasFile('logo')) {
+                if ($data->logo) Storage::disk('public')->delete($data->logo);
+                $input['logo'] = $request->file('logo')->store('logo', 'public');
+            }
+        }
+
+        // === Handle Slider Images (1–5) ===
+        if ($section === 'slider') {
+            for ($i = 1; $i <= 5; $i++) {
+                $field = 'slider_' . $i;
+                if ($request->hasFile($field)) {
+                    if ($data->$field) Storage::disk('public')->delete($data->$field);
+                    $input[$field] = $request->file($field)->store('slider', 'public');
+                } elseif ($request->input('delete_' . $field)) {
+                    if ($data->$field) Storage::disk('public')->delete($data->$field);
+                    $input[$field] = null;
+                }
+            }
+        }
+
+        if (!empty($input)) {
+            $data->update($input);
+        }
+
+        $label = $sectionLabels[$section] ?? 'Pengaturan';
+        redirect('/admin/pengaturan')->with('success', $label . ' berhasil disimpan!');
     }
 }

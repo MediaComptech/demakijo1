@@ -254,32 +254,40 @@
             <div class="container-fluid">
 
                 {{-- ============================================================ --}}
-                {{-- FLASH MESSAGES (Bootstrap alerts — fallback tampilan inline)  --}}
+                {{-- FLASH MESSAGES — Ditampilkan inline di konten utama          --}}
+                {{-- View::render() sudah pass $flash_* dari Session::getFlash()  --}}
                 {{-- ============================================================ --}}
-                @if(!empty($flash_success))
-                    <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
-                        <i class="fas fa-check-circle me-2"></i><strong>Berhasil!</strong> {{ $flash_success }}
+                @php
+                    $fSuccess = $flash_success ?? session('success');
+                    $fError = $flash_error ?? session('error');
+                    $fWarning = $flash_warning ?? session('warning');
+                    $fInfo = $flash_info ?? session('info');
+                @endphp
+
+                @if(!empty($fSuccess))
+                    <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-3 border-0" role="alert" style="border-left:4px solid #198754 !important;">
+                        <i class="fas fa-check-circle me-2"></i><strong>Berhasil!</strong> {{ $fSuccess }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 @endif
 
-                @if(!empty($flash_error))
-                    <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
-                        <i class="fas fa-times-circle me-2"></i><strong>Gagal!</strong> {{ $flash_error }}
+                @if(!empty($fError))
+                    <div class="alert alert-danger alert-dismissible fade show shadow-sm rounded-3 border-0" role="alert" style="border-left:4px solid #dc3545 !important;">
+                        <i class="fas fa-times-circle me-2"></i><strong>Gagal!</strong> {{ $fError }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 @endif
 
-                @if(!empty($flash_warning))
-                    <div class="alert alert-warning alert-dismissible fade show shadow-sm" role="alert">
-                        <i class="fas fa-exclamation-triangle me-2"></i><strong>Perhatian!</strong> {{ $flash_warning }}
+                @if(!empty($fWarning))
+                    <div class="alert alert-warning alert-dismissible fade show shadow-sm rounded-3 border-0" role="alert" style="border-left:4px solid #ffc107 !important;">
+                        <i class="fas fa-exclamation-triangle me-2"></i><strong>Perhatian!</strong> {{ $fWarning }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 @endif
 
-                @if(!empty($flash_info))
-                    <div class="alert alert-info alert-dismissible fade show shadow-sm" role="alert">
-                        <i class="fas fa-info-circle me-2"></i>{{ $flash_info }}
+                @if(!empty($fInfo))
+                    <div class="alert alert-info alert-dismissible fade show shadow-sm rounded-3 border-0" role="alert" style="border-left:4px solid #0dcaf0 !important;">
+                        <i class="fas fa-info-circle me-2"></i>{{ $fInfo }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 @endif
@@ -312,72 +320,116 @@
 <!-- SweetAlert2 JS -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-{{-- SweetAlert2 Toast Notifikasi dari Flash Session --}}
-@if(!empty($flash_success))
+{{-- SweetAlert2 Toast — menggunakan variabel terpadu $fSuccess/$fError/dst. --}}
+@if(!empty($fSuccess))
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     Swal.fire({
         icon: 'success',
         title: 'Berhasil!',
-        text: '{{ addslashes($flash_success) }}',
+        text: '{{ addslashes($fSuccess) }}',
         toast: true,
         position: 'top-end',
         timer: 4000,
         timerProgressBar: true,
-        showConfirmButton: false
+        showConfirmButton: false,
+        background: '#f0fdf4',
+        color: '#166534',
+        iconColor: '#16a34a',
+        customClass: { popup: 'rounded-3 shadow' }
     });
 });
 </script>
 @endif
 
-@if(!empty($flash_error))
+@if(!empty($fError))
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     Swal.fire({
         icon: 'error',
         title: 'Gagal!',
-        text: '{{ addslashes($flash_error) }}',
+        text: '{{ addslashes($fError) }}',
         toast: true,
         position: 'top-end',
         timer: 5000,
         timerProgressBar: true,
-        showConfirmButton: false
+        showConfirmButton: false,
+        background: '#fef2f2',
+        color: '#991b1b',
+        iconColor: '#dc2626',
+        customClass: { popup: 'rounded-3 shadow' }
     });
 });
 </script>
 @endif
 
-@if(!empty($flash_warning))
+@if(!empty($fWarning))
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     Swal.fire({
         icon: 'warning',
         title: 'Perhatian!',
-        text: '{{ addslashes($flash_warning) }}',
+        text: '{{ addslashes($fWarning) }}',
         toast: true,
         position: 'top-end',
         timer: 5000,
         timerProgressBar: true,
-        showConfirmButton: false
+        showConfirmButton: false,
+        background: '#fffbeb',
+        color: '#92400e',
+        iconColor: '#d97706',
+        customClass: { popup: 'rounded-3 shadow' }
     });
 });
 </script>
 @endif
 
-@if(!empty($flash_info))
+@if(!empty($fInfo))
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     Swal.fire({
         icon: 'info',
-        text: '{{ addslashes($flash_info) }}',
+        text: '{{ addslashes($fInfo) }}',
         toast: true,
         position: 'top-end',
         timer: 4000,
         timerProgressBar: true,
-        showConfirmButton: false
+        showConfirmButton: false,
+        background: '#eff6ff',
+        color: '#1e40af',
+        iconColor: '#3b82f6',
+        customClass: { popup: 'rounded-3 shadow' }
     });
 });
 </script>
 @endif
+
+{{-- Konfirmasi Hapus Global dengan SweetAlert --}}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.form-delete-confirm').forEach(function (form) {
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const label = this.dataset.label || 'data ini';
+            Swal.fire({
+                title: 'Konfirmasi Hapus',
+                text: 'Apakah Anda yakin ingin menghapus ' + label + '? Tindakan ini tidak dapat dibatalkan.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: '<i class="fas fa-trash me-1"></i> Ya, Hapus!',
+                cancelButtonText: 'Batal',
+                reverseButtons: true,
+                focusCancel: true,
+                customClass: { popup: 'rounded-3' }
+            }).then(function (result) {
+                if (result.isConfirmed) { form.submit(); }
+            });
+        });
+    });
+});
+</script>
 </body>
 </html>
+
