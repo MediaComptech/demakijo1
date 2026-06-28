@@ -95,8 +95,8 @@ class View
             mkdir($cachePath, 0777, true);
         }
 
-        // Mode debug: compile ulang setiap request. MODE_FAST: compile ulang jika template lebih baru dari cache.
-        $mode = ($_ENV['APP_ENV'] ?? 'local') === 'production' ? BladeOne::MODE_FAST : BladeOne::MODE_DEBUG;
+        // Mode debug: compile ulang setiap request. MODE_AUTO: compile ulang jika template lebih baru dari cache.
+        $mode = ($_ENV['APP_ENV'] ?? 'local') === 'production' ? BladeOne::MODE_AUTO : BladeOne::MODE_DEBUG;
 
         self::$blade = new BladeOne($viewsPath, $cachePath, $mode);
         

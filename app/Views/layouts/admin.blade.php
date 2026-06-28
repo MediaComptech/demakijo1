@@ -472,7 +472,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 cancelButtonText: 'Batal',
                 reverseButtons: true,
                 focusCancel: true,
-                customClass: { popup: 'rounded-3' }
             }).then(function (result) {
                 if (result.isConfirmed) { form.submit(); }
             });
@@ -480,6 +479,27 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
+    <!-- PWA Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js').then(reg => {
+                    // Check if there is an update available
+                    reg.onupdatefound = () => {
+                        const installingWorker = reg.installing;
+                        if (installingWorker) {
+                            installingWorker.onstatechange = () => {
+                                if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    // New update found, reload page to apply immediately
+                                    window.location.reload();
+                                }
+                            };
+                        }
+                    };
+                });
+            });
+        }
+    </script>
 </body>
 </html>
 
