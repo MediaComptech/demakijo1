@@ -22,3 +22,43 @@ docs/database_export.sql
 # OS files
 .DS_Store
 Thumbs.db
+
+# Uploaded user files (tidak perlu di repo)
+/public/storage/uploads/*
+!/public/storage/uploads/.gitkeep
+
+# File debug & temporary
+*.txt
+check_db.php
+db_check.php
+debug_out.txt
+dashboard_check.txt
+home_out.txt
+web_check.txt
+test_*.php
+public/test_*.php
+public/check_*.php
+public/migrate_*.php
+public/update_*.php
+public/list_*.php
+public/add_*.php
+
+# Deploy helper (sensitif)
+setup_deploy.php
+
+# Nested repo (duplikat folder)
+demakijo1_deploy/
+
+# IDE
+.vscode/
+.idea/
+
+# Implementation docs (internal only)
+implementation_plan_*.md
+task_crud_Admin.md
+Layout.md
+deploy.md
+solving.md
+maintenance.md
+Website CRUD*.md
+implementation_plan_CRUD_Admin
