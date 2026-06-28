@@ -43,8 +43,9 @@ public/update_*.php
 public/list_*.php
 public/add_*.php
 
-# Deploy helper (sensitif)
-setup_deploy.php
+# Deploy helper — diizinkan di git agar bisa ter-deploy otomatis ke hosting
+# HAPUS MANUAL dari public_html setelah selesai setup
+# setup_deploy.php
 
 # Nested repo (duplikat folder)
 demakijo1_deploy/
