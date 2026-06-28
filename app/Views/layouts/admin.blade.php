@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'Dashboard') | Admin SDN Demakijo 1</title>
+    <link rel="icon" type="image/png" href="/logo-192.png">
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -22,12 +23,58 @@
             background-color: #003366 !important; /* Biru korporat sekolah */
         }
         .brand-link {
-            border-bottom: 1px solid #ffcc00 !important; /* Kuning sekolah */
+            border-bottom: 2px solid #ffcc00 !important; /* Kuning sekolah */
+            background-color: #002244 !important;
         }
         .nav-sidebar .nav-item > .nav-link.active {
             background-color: #ffcc00 !important;
             color: #003366 !important;
             font-weight: bold;
+        }
+        /* Top Navbar */
+        .app-header.navbar {
+            background-color: #003366 !important;
+            border-bottom: 2px solid #ffcc00 !important;
+        }
+        .app-header.navbar .nav-link, 
+        .app-header.navbar .navbar-nav .nav-link,
+        .app-header.navbar .user-menu .dropdown-toggle {
+            color: #ffffff !important;
+        }
+        .app-header.navbar .nav-link:hover,
+        .app-header.navbar .navbar-nav .nav-link:hover {
+            color: #ffcc00 !important;
+        }
+        /* Content Header */
+        .app-content-header {
+            background: linear-gradient(135deg, #002244, #003366) !important;
+            padding: 1.25rem 1.5rem !important;
+            margin-bottom: 1.5rem !important;
+            border-bottom: 3px solid #ffcc00 !important;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .app-content-header h3 {
+            color: #ffffff !important;
+            font-weight: 700 !important;
+            font-size: 1.6rem !important;
+        }
+        .app-content-header .breadcrumb-item a {
+            color: #ffcc00 !important;
+            text-decoration: none !important;
+            font-weight: 600 !important;
+        }
+        .app-content-header .breadcrumb-item.active {
+            color: #ffffff !important;
+            opacity: 0.85 !important;
+        }
+        .app-content-header .breadcrumb-item + .breadcrumb-item::before {
+            color: rgba(255, 255, 255, 0.6) !important;
+        }
+        /* Card headers styling */
+        .card {
+            border: none !important;
+            border-radius: 0.5rem !important;
+            overflow: hidden !important;
         }
     </style>
 </head>
@@ -78,8 +125,9 @@
     <!-- Main Sidebar Container -->
     <aside class="app-sidebar shadow" data-bs-theme="dark" style="background-color: #003366;">
         <!-- Brand Logo -->
-        <a href="{{ url('/dashboard') }}" class="brand-link text-center">
-            <span class="brand-text font-weight-light fw-bold text-white">SDN DEMAKIJO 1</span>
+        <a href="{{ url('/dashboard') }}" class="brand-link text-center d-flex align-items-center justify-content-center py-3">
+            <img src="/logo-192.png" alt="Logo" class="brand-image img-circle shadow-sm me-2" style="height:30px; width:30px; object-fit:contain;">
+            <span class="brand-text font-weight-light fw-bold text-white fs-6">SDN DEMAKIJO 1</span>
         </a>
 
         <!-- Sidebar -->

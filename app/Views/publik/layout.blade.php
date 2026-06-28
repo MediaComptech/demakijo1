@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     @php $siteConfig = \App\Models\SettingWebsite::first(); @endphp
     <title>{{ $title ?? ($siteConfig->nama_sekolah ?? 'SDN Demakijo 1') }} - Smart School</title>
+    <link rel="icon" type="image/png" href="/logo-192.png">
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#004aad">
     

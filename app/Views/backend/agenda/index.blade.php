@@ -19,6 +19,7 @@
                         <th>Tanggal Mulai</th>
                         <th>Tanggal Selesai</th>
                         <th>Lokasi</th>
+                        <th>Kategori</th>
                         <th width="110" class="text-center">Aksi</th>
                     </tr>
                 </thead>
@@ -30,6 +31,7 @@
                         <td><span class="badge bg-primary">{{ $item->tanggal_mulai ?? '-' }}</span></td>
                         <td><span class="badge bg-secondary">{{ $item->tanggal_selesai ?? '-' }}</span></td>
                         <td><i class="fas fa-map-marker-alt text-danger me-1"></i>{{ $item->lokasi ?? '-' }}</td>
+                        <td><span class="badge bg-info text-dark fw-semibold">{{ $item->kategori ?? 'Akademik' }}</span></td>
                         <td class="text-center">
                             <a href="{{ route('admin.agenda.edit', $item->id) }}"
                                class="btn btn-warning btn-sm" title="Edit">

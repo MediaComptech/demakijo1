@@ -2,7 +2,7 @@
 @section('title', 'Tambah Galeri Foto')
 @section('content')
 <div class="card shadow-sm">
-    <div class="card-header"><h5 class="mb-0">Tambah Foto ke Galeri</h5></div>
+    <div class="card-header d-flex justify-content-between align-items-center py-3" style="background:linear-gradient(135deg,#003366,#0056b3);border-radius:.5rem .5rem 0 0;"><h5 class="mb-0 text-white fw-bold"><i class="fas fa-plus me-2"></i>Tambah Foto ke Galeri</h5></div>
     <div class="card-body">
         @if($errors->any())
             <div class="alert alert-danger"><ul class="mb-0">@foreach($errors->all() as $e)<li>{{ $e }}</li>@endforeach</ul></div>

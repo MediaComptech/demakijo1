@@ -4,7 +4,7 @@
 <div class="row g-4">
     <div class="col-lg-7">
         <div class="card shadow-sm border-0 rounded-3">
-            <div class="card-header"><h6 class="mb-0 fw-bold">Data Pendaftar</h6></div>
+            <div class="card-header d-flex justify-content-between align-items-center py-3" style="background:linear-gradient(135deg,#003366,#0056b3);border-radius:.5rem .5rem 0 0;"><h6 class="mb-0 fw-bold">Data Pendaftar</h6></div>
             <div class="card-body">
                 <form action="{{ route('admin.ppdb.update', $data->id) }}" method="POST" enctype="multipart/form-data">
                     {!! csrf_field() !!} <input type="hidden" name="_method" value="PUT">
@@ -86,7 +86,7 @@
     {{-- Right: Berkas --}}
     <div class="col-lg-5">
         <div class="card shadow-sm border-0 rounded-3">
-            <div class="card-header"><h6 class="mb-0 fw-bold"><i class="fas fa-folder-open me-2"></i>Berkas Dokumen</h6></div>
+            <div class="card-header d-flex justify-content-between align-items-center py-3" style="background:linear-gradient(135deg,#003366,#0056b3);border-radius:.5rem .5rem 0 0;"><h6 class="mb-0 fw-bold"><i class="fas fa-folder-open me-2"></i>Berkas Dokumen</h6></div>
             <div class="card-body">
                 @foreach(['berkas_kk'=>'Kartu Keluarga','berkas_akta'=>'Akta Kelahiran','berkas_pasfoto'=>'Pas Foto'] as $field => $label)
                 <div class="mb-4">
