@@ -17,6 +17,16 @@
             <input type="text" name="nama" class="form-control" value="{{ old('nama') }}" required>
         </div>
         <div class="mb-3">
+            <label class="form-label fw-semibold">Kategori Album</label>
+            <select name="kategori" class="form-select" required>
+                <option value="Kegiatan Sekolah" {{ old('kategori') == 'Kegiatan Sekolah' ? 'selected' : '' }}>Kegiatan Sekolah</option>
+                <option value="Ekstrakurikuler" {{ old('kategori') == 'Ekstrakurikuler' ? 'selected' : '' }}>Ekstrakurikuler</option>
+                <option value="Prestasi" {{ old('kategori') == 'Prestasi' ? 'selected' : '' }}>Prestasi</option>
+                <option value="Kunjungan" {{ old('kategori') == 'Kunjungan' ? 'selected' : '' }}>Kunjungan</option>
+                <option value="Lainnya" {{ old('kategori') == 'Lainnya' || !old('kategori') ? 'selected' : '' }}>Lainnya</option>
+            </select>
+        </div>
+        <div class="mb-3">
             <label class="form-label fw-semibold">Deskripsi Album</label>
             <textarea name="deskripsi" class="form-control" rows="4" >{{ old('deskripsi') }}</textarea>
         </div>

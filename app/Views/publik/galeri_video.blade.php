@@ -64,23 +64,23 @@ $playlists = [
     <div class="col-lg-8">
         <!-- Filter Chips + Sort -->
         <div class="d-flex flex-wrap align-items-center gap-2 mb-4">
-            <a href="#" class="filter-chip active"><i class="fas fa-play-circle"></i> Semua Video</a>
-            <a href="#" class="filter-chip"><i class="fas fa-school"></i> Kegiatan Sekolah</a>
-            <a href="#" class="filter-chip"><i class="fas fa-running"></i> Ekstrakurikuler</a>
-            <a href="#" class="filter-chip"><i class="fas fa-trophy"></i> Prestasi</a>
-            <a href="#" class="filter-chip"><i class="fas fa-star"></i> Acara Spesial</a>
-            <select class="ms-auto" style="border:1.5px solid #dee2e6;border-radius:8px;padding:5px 12px;font-size:.82rem;font-weight:600;color:#444;background:#fff;">
-                <option>Terbaru</option>
-                <option>Terlama</option>
-                <option>Terpopuler</option>
+            <a href="#" class="filter-chip active" data-filter="all"><i class="fas fa-play-circle"></i> Semua Video</a>
+            <a href="#" class="filter-chip" data-filter="Kegiatan Sekolah"><i class="fas fa-school"></i> Kegiatan Sekolah</a>
+            <a href="#" class="filter-chip" data-filter="Ekstrakurikuler"><i class="fas fa-running"></i> Ekstrakurikuler</a>
+            <a href="#" class="filter-chip" data-filter="Prestasi"><i class="fas fa-trophy"></i> Prestasi</a>
+            <a href="#" class="filter-chip" data-filter="Acara Spesial"><i class="fas fa-star"></i> Acara Spesial</a>
+            <select class="ms-auto" id="videoSort" style="border:1.5px solid #dee2e6;border-radius:8px;padding:5px 12px;font-size:.82rem;font-weight:600;color:#444;background:#fff;">
+                <option value="Terbaru">Terbaru</option>
+                <option value="Terlama">Terlama</option>
+                <option value="Terpopuler">Terpopuler</option>
             </select>
-            <button style="width:34px;height:34px;border-radius:8px;border:1.5px solid #0056b3;background:#0056b3;display:inline-flex;align-items:center;justify-content:center;font-size:.85rem;color:#fff;"><i class="fas fa-th-large"></i></button>
+            <button class="view-toggle-btn active" id="btnGrid" style="width:34px;height:34px;border-radius:8px;border:1.5px solid #0056b3;background:#0056b3;display:inline-flex;align-items:center;justify-content:center;font-size:.85rem;color:#fff;"><i class="fas fa-th-large"></i></button>
         </div>
 
         <!-- Video Grid 2-kolom -->
-        <div class="row g-3">
+        <div class="row g-3" id="videoGrid">
             @foreach($videos as $v)
-            <div class="col-md-6">
+            <div class="col-md-6 video-item-col" data-kategori="{{ $v['kategori'] }}" data-date="{{ strtotime($v['tanggal']) }}" data-views="{{ intval(str_replace('.', '', $v['views'])) }}">
                 <div class="video-card">
                     <div class="video-thumb">
                         <img src="https://img.youtube.com/vi/{{ $v['id'] }}/hqdefault.jpg" alt="{{ $v['judul'] }}">
@@ -107,7 +107,7 @@ $playlists = [
 
         <!-- Load More -->
         <div class="text-center mt-2">
-            <button class="load-more-btn"><i class="fas fa-chevron-down"></i> Muat Lebih Banyak <i class="fas fa-chevron-down"></i></button>
+            <button class="load-more-btn" id="btnLoadMore"><i class="fas fa-chevron-down"></i> Muat Lebih Banyak <i class="fas fa-chevron-down"></i></button>
         </div>
     </div>
 
@@ -127,7 +127,7 @@ $playlists = [
                 </div>
             </div>
             @endforeach
-            <a href="#" class="btn-lihat-semua">Lihat Semua Playlist →</a>
+            <a href="#" class="btn-lihat-semua" id="btnAllVideos">Lihat Semua Playlist →</a>
         </div>
 
         <!-- Statistik Video -->
@@ -154,4 +154,58 @@ $playlists = [
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const chips = document.querySelectorAll('.filter-chip');
+    const cols = Array.from(document.querySelectorAll('.video-item-col'));
+    const sortSelect = document.getElementById('videoSort');
+    const grid = document.getElementById('videoGrid');
+    
+    // Category Filter Functionality
+    function filterVideos(filterValue) {
+        cols.forEach(function(col) {
+            const cat = col.getAttribute('data-kategori');
+            if (filterValue === 'all' || cat === filterValue) {
+                col.style.display = '';
+            } else {
+                col.style.display = 'none';
+            }
+        });
+    }
+
+    chips.forEach(function(chip) {
+        chip.addEventListener('click', function(e) {
+            e.preventDefault();
+            chips.forEach(c => c.classList.remove('active'));
+            this.classList.add('active');
+            filterVideos(this.getAttribute('data-filter'));
+        });
+    });
+
+    document.getElementById('btnAllVideos').addEventListener('click', function(e) {
+        e.preventDefault();
+        const allChip = document.querySelector('.filter-chip[data-filter="all"]');
+        if (allChip) allChip.click();
+    });
+
+    // Sorting Functionality
+    if (sortSelect && grid) {
+        sortSelect.addEventListener('change', function() {
+            const val = this.value;
+            const sorted = cols.sort(function(a, b) {
+                if (val === 'Terlama') {
+                    return parseInt(a.getAttribute('data-date')) - parseInt(b.getAttribute('data-date'));
+                } else if (val === 'Terpopuler') {
+                    return parseInt(b.getAttribute('data-views')) - parseInt(a.getAttribute('data-views'));
+                } else { // Terbaru
+                    return parseInt(b.getAttribute('data-date')) - parseInt(a.getAttribute('data-date'));
+                }
+            });
+            grid.innerHTML = '';
+            sorted.forEach(col => grid.appendChild(col));
+        });
+    }
+});
+</script>
 @endsection

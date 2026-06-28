@@ -17,6 +17,7 @@
                         <th width="5%">No</th>
                         <th width="60">Foto</th>
                         <th>Nama Album</th>
+                        <th>Kategori</th>
                         <th>Deskripsi</th>
                         <th width="110" class="text-center">Aksi</th>
                     </tr>
@@ -32,11 +33,12 @@
                             @else
                                 <div class="rounded bg-secondary d-flex align-items-center justify-content-center text-white"
                                      style="height:45px;width:45px;">
-                                    <i class="fas fa-folder"></i>
+                                     <i class="fas fa-folder"></i>
                                 </div>
                             @endif
                         </td>
                         <td class="fw-semibold">{{ $item->nama ?? '-' }}</td>
+                        <td><span class="badge bg-info text-dark">{{ $item->kategori ?? 'Lainnya' }}</span></td>
                         <td><span class="text-muted small">{{ Str::limit($item->deskripsi ?? '-', 60) }}</span></td>
                         <td class="text-center">
                             <a href="{{ url('/admin/album/' . $item->id . '/edit') }}"

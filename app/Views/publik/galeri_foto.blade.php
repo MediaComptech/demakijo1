@@ -69,22 +69,22 @@
     <div class="col-lg-8">
         <!-- Filter Chips -->
         <div class="d-flex flex-wrap gap-2 mb-4">
-            <a href="#" class="filter-chip active"><i class="fas fa-th-large"></i> Semua Album</a>
-            <a href="#" class="filter-chip"><i class="fas fa-school"></i> Kegiatan Sekolah</a>
-            <a href="#" class="filter-chip"><i class="fas fa-running"></i> Ekstrakurikuler</a>
-            <a href="#" class="filter-chip"><i class="fas fa-trophy"></i> Prestasi</a>
-            <a href="#" class="filter-chip"><i class="fas fa-users"></i> Kunjungan</a>
-            <a href="#" class="filter-chip"><i class="fas fa-ellipsis-h"></i> Lainnya</a>
+            <a href="{{ url('/galeri/foto') }}?sort={{ $sort }}" class="filter-chip {{ !$kategori ? 'active' : '' }}"><i class="fas fa-th-large"></i> Semua Album</a>
+            <a href="{{ url('/galeri/foto?kategori=Kegiatan Sekolah') }}&sort={{ $sort }}" class="filter-chip {{ $kategori === 'Kegiatan Sekolah' ? 'active' : '' }}"><i class="fas fa-school"></i> Kegiatan Sekolah</a>
+            <a href="{{ url('/galeri/foto?kategori=Ekstrakurikuler') }}&sort={{ $sort }}" class="filter-chip {{ $kategori === 'Ekstrakurikuler' ? 'active' : '' }}"><i class="fas fa-running"></i> Ekstrakurikuler</a>
+            <a href="{{ url('/galeri/foto?kategori=Prestasi') }}&sort={{ $sort }}" class="filter-chip {{ $kategori === 'Prestasi' ? 'active' : '' }}"><i class="fas fa-trophy"></i> Prestasi</a>
+            <a href="{{ url('/galeri/foto?kategori=Kunjungan') }}&sort={{ $sort }}" class="filter-chip {{ $kategori === 'Kunjungan' ? 'active' : '' }}"><i class="fas fa-users"></i> Kunjungan</a>
+            <a href="{{ url('/galeri/foto?kategori=Lainnya') }}&sort={{ $sort }}" class="filter-chip {{ $kategori === 'Lainnya' ? 'active' : '' }}"><i class="fas fa-ellipsis-h"></i> Lainnya</a>
         </div>
 
         <!-- Toolbar -->
         <div class="gallery-toolbar">
             <h5><i class="fas fa-images"></i> Album Foto</h5>
             <div class="sort-group">
-                <select class="sort-select">
-                    <option>Terbaru</option>
-                    <option>Terlama</option>
-                    <option>Terbanyak</option>
+                <select class="sort-select" onchange="location.href = '{{ url('/galeri/foto') }}?{{ $kategori ? 'kategori=' . urlencode($kategori) . '&' : '' }}sort=' + this.value;">
+                    <option value="Terbaru" {{ $sort === 'Terbaru' ? 'selected' : '' }}>Terbaru</option>
+                    <option value="Terlama" {{ $sort === 'Terlama' ? 'selected' : '' }}>Terlama</option>
+                    <option value="Terbanyak" {{ $sort === 'Terbanyak' ? 'selected' : '' }}>Terbanyak</option>
                 </select>
                 <button class="view-toggle-btn active" title="Grid"><i class="fas fa-th-large"></i></button>
                 <button class="view-toggle-btn" title="List"><i class="fas fa-list"></i></button>
@@ -208,7 +208,7 @@
             @empty
             <p class="text-muted small">Belum ada album.</p>
             @endforelse
-            <a href="#" class="btn-lihat-semua">Lihat Semua Album →</a>
+            <a href="{{ url('/galeri/foto') }}" class="btn-lihat-semua">Lihat Semua Album →</a>
         </div>
     </div>
 </div>

@@ -106,8 +106,24 @@ Router::get('/komite-sekolah', function () {
 });
 
 Router::get('/galeri/foto', function () {
-    $album = \App\Models\Album::with('galeri')->latest()->get();
-    return \App\Core\View::render('publik.galeri_foto', compact('album'));
+    $kategori = $_GET['kategori'] ?? null;
+    $sort = $_GET['sort'] ?? 'Terbaru';
+    
+    $query = \App\Models\Album::with('galeri');
+    if ($kategori && in_array($kategori, ['Kegiatan Sekolah', 'Ekstrakurikuler', 'Prestasi', 'Kunjungan', 'Lainnya'])) {
+        $query->where('kategori', $kategori);
+    }
+    
+    if ($sort === 'Terlama') {
+        $query->orderBy('created_at', 'asc');
+    } elseif ($sort === 'Terbanyak') {
+        $query->withCount('galeri')->orderBy('galeri_count', 'desc');
+    } else {
+        $query->orderBy('created_at', 'desc');
+    }
+    
+    $album = $query->get();
+    return \App\Core\View::render('publik.galeri_foto', compact('album', 'kategori', 'sort'));
 });
 
 Router::get('/galeri/video', function () {

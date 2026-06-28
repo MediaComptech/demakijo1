@@ -71,11 +71,11 @@ function guruCardIcon($idx) {
 
 <!-- Filter Chips -->
 <div class="d-flex flex-wrap gap-2 mb-4">
-    <a href="#" class="filter-chip active"><i class="fas fa-users"></i> Semua</a>
-    <a href="#" class="filter-chip"><i class="fas fa-chalkboard-teacher"></i> Guru Kelas</a>
-    <a href="#" class="filter-chip"><i class="fas fa-book-open"></i> Guru Mapel</a>
-    <a href="#" class="filter-chip"><i class="fas fa-hands-helping"></i> Guru Pendamping</a>
-    <a href="#" class="filter-chip"><i class="fas fa-id-badge"></i> Tenaga Kependidikan</a>
+    <a href="#" class="filter-chip active" data-filter="all"><i class="fas fa-users"></i> Semua</a>
+    <a href="#" class="filter-chip" data-filter="kelas"><i class="fas fa-chalkboard-teacher"></i> Guru Kelas</a>
+    <a href="#" class="filter-chip" data-filter="mapel"><i class="fas fa-book-open"></i> Guru Mapel</a>
+    <a href="#" class="filter-chip" data-filter="pendamping"><i class="fas fa-hands-helping"></i> Guru Pendamping</a>
+    <a href="#" class="filter-chip" data-filter="tendik"><i class="fas fa-id-badge"></i> Tenaga Kependidikan</a>
 </div>
 
 <!-- Guru Grid -->
@@ -87,7 +87,7 @@ function guruCardIcon($idx) {
         $cardIcon     = guruCardIcon($idx);
         $initials     = collect(explode(' ', $item->nama))->take(2)->map(fn($w) => strtoupper($w[0] ?? ''))->implode('');
     @endphp
-    <div class="col-6 col-md-4 col-lg-3" data-aos="fade-up" data-aos-delay="{{ $idx * 50 }}">
+    <div class="col-6 col-md-4 col-lg-3 guru-item-col" data-kategori="{{ $jabatanClass ?: 'kelas' }}" data-aos="fade-up" data-aos-delay="{{ $idx * 50 }}">
         <div class="guru-card">
             <div class="guru-card-top">
                 <span class="badge-aktif">Aktif</span>
@@ -179,4 +179,29 @@ function guruCardIcon($idx) {
         <div class="apresiasi-line"></div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const chips = document.querySelectorAll('.filter-chip');
+    const cols = document.querySelectorAll('.guru-item-col');
+
+    chips.forEach(function(chip) {
+        chip.addEventListener('click', function(e) {
+            e.preventDefault();
+            chips.forEach(c => c.classList.remove('active'));
+            this.classList.add('active');
+
+            const filterValue = this.getAttribute('data-filter');
+            cols.forEach(function(col) {
+                const cat = col.getAttribute('data-kategori');
+                if (filterValue === 'all' || cat === filterValue) {
+                    col.style.display = '';
+                } else {
+                    col.style.display = 'none';
+                }
+            });
+        });
+    });
+});
+</script>
 @endsection
