@@ -167,6 +167,8 @@ Router::post('/admin/album/{id}/delete', 'Backend\AlbumController@destroy');
 Router::get('/admin/galeri', 'Backend\GaleriController@index');
 Router::get('/admin/galeri/create', 'Backend\GaleriController@create');
 Router::post('/admin/galeri', 'Backend\GaleriController@store');
+Router::get('/admin/galeri/{id}/edit', 'Backend\GaleriController@edit');
+Router::post('/admin/galeri/{id}/update', 'Backend\GaleriController@update');
 Router::post('/admin/galeri/{id}/delete', 'Backend\GaleriController@destroy');
 
 // Pengumuman

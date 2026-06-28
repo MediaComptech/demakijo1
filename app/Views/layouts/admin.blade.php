@@ -25,6 +25,12 @@
         .brand-link {
             border-bottom: 2px solid #ffcc00 !important; /* Kuning sekolah */
             background-color: #002244 !important;
+            height: 60px !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
         }
         .nav-sidebar .nav-item > .nav-link.active {
             background-color: #ffcc00 !important;
@@ -35,11 +41,17 @@
         .app-header.navbar {
             background-color: #003366 !important;
             border-bottom: 2px solid #ffcc00 !important;
+            height: 60px !important;
+            padding: 0 1rem !important;
+            display: flex;
+            align-items: center;
         }
         .app-header.navbar .nav-link, 
         .app-header.navbar .navbar-nav .nav-link,
         .app-header.navbar .user-menu .dropdown-toggle {
             color: #ffffff !important;
+            display: flex;
+            align-items: center;
         }
         .app-header.navbar .nav-link:hover,
         .app-header.navbar .navbar-nav .nav-link:hover {
@@ -125,7 +137,7 @@
     <!-- Main Sidebar Container -->
     <aside class="app-sidebar shadow" data-bs-theme="dark" style="background-color: #003366;">
         <!-- Brand Logo -->
-        <a href="{{ url('/dashboard') }}" class="brand-link text-center d-flex align-items-center justify-content-center py-3">
+        <a href="{{ url('/dashboard') }}" class="brand-link">
             <img src="/logo-192.png" alt="Logo" class="brand-image img-circle shadow-sm me-2" style="height:30px; width:30px; object-fit:contain;">
             <span class="brand-text font-weight-light fw-bold text-white fs-6">SDN DEMAKIJO 1</span>
         </a>

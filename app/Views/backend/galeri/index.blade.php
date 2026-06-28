@@ -41,6 +41,10 @@
                         <span class="badge bg-dark">{{ $item->album->nama ?? '-' }}</span>
                     </td>
                     <td class="text-center">
+                        <a href="{{ route('admin.galeri.edit', $item->id) }}"
+                           class="btn btn-warning btn-sm me-1" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </a>
                         <form action="{{ url('/admin/galeri/' . $item->id . '/delete') }}" method="POST"
                               class="d-inline form-delete-confirm" data-label="foto '{{ addslashes($item->judul ?? '') }}'">
                             {!! csrf_field() !!} <input type="hidden" name="_method" value="DELETE">

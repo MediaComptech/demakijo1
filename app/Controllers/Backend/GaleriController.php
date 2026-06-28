@@ -37,6 +37,25 @@ class GaleriController extends Controller
         redirect('/admin/galeri')->with('success', 'Foto berhasil ditambahkan');
     }
 
+    public function edit($id)
+    {
+        $data = Galeri::findOrFail($id);
+        $album = Album::all();
+        return view('backend.galeri.edit', compact('data', 'album'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $model = Galeri::findOrFail($id);
+        $input = $request->except('_token', '_method');
+        if ($request->hasFile('file')) {
+            if ($model->file) native_storage_delete($model->file);
+            $input['file'] = $request->file('file')->store('uploads', 'public');
+        }
+        $model->update($input);
+        redirect('/admin/galeri')->with('success', 'Foto berhasil diubah');
+    }
+
     public function destroy($id)
     {
         $model = Galeri::findOrFail($id);
