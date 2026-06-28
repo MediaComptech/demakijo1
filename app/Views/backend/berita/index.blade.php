@@ -3,7 +3,7 @@
 @section('content')
 <div class="card shadow-sm border-0">
     <div class="card-header d-flex justify-content-between align-items-center py-3"
-         style="background:linear-gradient(135deg,#1e3a8a,#2563eb);border-radius:.5rem .5rem 0 0;">
+         style="background:linear-gradient(135deg,#003366,#0056b3);border-radius:.5rem .5rem 0 0;">
         <h5 class="mb-0 text-white fw-bold"><i class="fas fa-newspaper me-2"></i>Data Berita & Artikel</h5>
         <a href="{{ url('/admin/berita/create') }}" class="btn btn-warning btn-sm fw-semibold">
             <i class="fas fa-plus me-1"></i>Tambah Berita
